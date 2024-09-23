@@ -2,7 +2,7 @@
 
 ## Demos 
 - [Square Moving Around Screen](square-moving) 
-
+- [Image Demo] (Image demo)
 
 ## Projects 
 

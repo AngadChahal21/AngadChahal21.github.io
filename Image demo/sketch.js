@@ -4,7 +4,7 @@
 let spongebob;
 
 function preload(){
-  spongebob = loadImage("bob.jpeg")
+  spongebob = loadImage("bob.png")
 }
 
 function setup() {

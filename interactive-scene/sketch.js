@@ -1,11 +1,9 @@
 // Project Title
 // Your Name
 // Date
-//
+// A replica for a 
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
-let screenChicken = loadImage("/pictures/chicken1");
-
 function setup() {
   createCanvas(windowWidth, windowHeight);
 }

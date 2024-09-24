@@ -1,5 +1,5 @@
 // Project Title
-// Your Name
+// Angadveer Chahal
 // Date
 // A replica for a game called "OKAY?"
 // Extra for Experts:
@@ -10,8 +10,14 @@ function setup() {
 
 let rectHeight = 220;
 let rectWidth = 30;
-let speed = 5;
+let speed = 3;
 let y = rectHeight*1.33;
+
+//1st rectangle
+upperBound1 = height/2 - rectHeight*1.33;
+
+//2nd rectangle 
+lowerBound2 = height/2 + rectHeight/3 + rectHeigh;
 
 function draw() {
   background(21,97,109);
@@ -22,9 +28,10 @@ function draw() {
   rect(width/2,height/2 - rectHeight*1.33   , rectWidth, rectHeight); // 1strectangle
 
   //moving circle
-  // moveBall();
-  // changeDirection();
   fill(255, 236, 209);
+  //changeDirection();
+  moveBall();
+   
   circle(2/3 * width, y, 80 );
 
 
@@ -35,7 +42,7 @@ function moveBall(){
 }
 
 function changeDirection(){
-  if(y >= rectHeigh/3 + rectHeight || y<= rectHeight*1.33){
+  if(y >= lowerBound2 || y<= upperBound1){
     speed = speed * -1; 
   }
 }

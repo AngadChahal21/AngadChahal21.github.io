@@ -7,19 +7,21 @@
 function setup() {
   createCanvas(windowWidth, windowHeight);
 }
-
 let rectHeight = 220;
 let rectWidth = 30;
 let speed = 3;
-let y = rectHeight*1.33;
+let y =  rectHeight*1.33;
+let radius = 40;
+
 
 //1st rectangle
-upperBound1 = height/2 - rectHeight*1.33;
+let upperBound1 = height/2 - rectHeight*1.33;
 
 //2nd rectangle 
-lowerBound2 = height/2 + rectHeight/3 + rectHeigh;
+let lowerBound2 = height/2 + rectHeight/3 + rectHeight;
 
 function draw() {
+  
   background(21,97,109);
   fill(0,21,36);
   
@@ -29,10 +31,13 @@ function draw() {
 
   //moving circle
   fill(255, 236, 209);
-  //changeDirection();
   moveBall();
-   
-  circle(2/3 * width, y, 80 );
+  changeDirection();
+
+  // if(y > lowerBound2 || y< upperBound1){
+  //   speed = speed * -1; 
+  // }
+  circle(2/3 * width, y, radius*2 );
 
 
 }
@@ -42,7 +47,10 @@ function moveBall(){
 }
 
 function changeDirection(){
-  if(y >= lowerBound2 || y<= upperBound1){
-    speed = speed * -1; 
+  // if(y > lowerBound2 || y< upperBound1){
+  //   speed = speed * -1; 
+  // }
+  if (y >= height - radius || y <= 0 + radius) {
+    speed = speed * -1;
   }
 }

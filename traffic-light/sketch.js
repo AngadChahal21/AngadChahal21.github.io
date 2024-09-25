@@ -7,9 +7,9 @@
 // function at https://p5js.org/reference/#/p5/millis
 
 let state = "green";
-let greenTime = 3000;
-let yellowTime = 500;
-let redTime = 3000;
+const GREEN_TIME = 3000;
+const YELLOW_TIME = 500;
+const RED_TIME = 3500;
 let lastSwitchedTime = 0;
 function setup() {
   createCanvas(600, 600);
@@ -18,19 +18,19 @@ function setup() {
 function draw() {
   background(255);
   //GREEN
-  if(state === "green" && millis() > lastSwitchedTime + greenTime){
+  if(state === "green" && millis() > lastSwitchedTime + GREEN_TIME){
     state = "yellow";
     lastSwitchedTime = millis();
   }
 
   //YELLOW
-  if(state === "yellow" && millis() > lastSwitchedTime + yellowTime){
+  if(state === "yellow" && millis() > lastSwitchedTime + YELLOW_TIME){
     state = "red";
     lastSwitchedTime = millis();
   }
 
   //RED 
-  if(state === "red" && millis() > lastSwitchedTime + redTime){
+  if(state === "red" && millis() > lastSwitchedTime + RED_TIME){
     state = "green";
     lastSwitchedTime = millis();
   }
@@ -49,7 +49,7 @@ function drawOutlineOfLights() {
   ///////////////////////LIGHTS /////////////////////////
 
   //top
-  if(state != "red"){
+  if(state !== "red"){
     fill(255);
   }
   else{

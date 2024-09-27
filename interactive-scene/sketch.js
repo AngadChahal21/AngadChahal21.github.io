@@ -11,24 +11,26 @@ let speed = 3;
 let y =  rectHeight*1.33;
 let radius = 40;
 
-let x1;
-let y1;
+
 let x2;
 let y2;
+
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 }
 
 
-//1st rectangle
-let upperBound1 = height/2 - rectHeight*1.33;
-
-//2nd rectangle 
-let lowerBound2 = height/2 + rectHeight/3 + rectHeight;
-
 function draw() {
   background(21,97,109);
+
+  //1st rectangle
+  let upperBound1 = height/2 - rectHeight*1.33;
+
+  //2nd rectangle 
+  let lowerBound2 = height/2 + rectHeight/3 + rectHeight;
+
   
   //osbtacle rectangles
   fill(0,21,36);
@@ -43,12 +45,16 @@ function draw() {
   fill(255, 236, 209);
   moveBall();
   changeDirection();
-  slingshot();
-  // if(y > lowerBound2 || y< upperBound1){
-  //   speed = speed * -1; 
-  // }
+  
+
+  
+  
   circle(2/3 * width, y, radius*2 );
 
+  
+  if(mouseIsPressed){
+    mouseClicked();
+  }
 
 }
 
@@ -57,22 +63,26 @@ function moveBall(){
 }
 
 function changeDirection(){
-  // if(y > lowerBound2 || y< upperBound1){
-  //   speed = speed * -1; 
-  // }
   if (y >= height - radius || y <= 0 + radius) {
     speed = speed * -1;
   }
 }
 
-function slingshot(){
-  function mouseClicked(){
-    x1 = mouseX;
-    y1 = mouseY;
-    console.log(x1, y1);
-  }
-  function mouseReleased(){
-    x2 = mouseX;
-    y2 = mouseY;
-  }
+function mouseClicked(){
+  const x1 = mouseX;
+  const y1 = mouseY;
+  console.log(x1 + " " + y1);
+  circle(mouseX, mouseY, 100);
 }
+
+// function slingshot(){
+//   function mouseClicked(){
+//     x1 = mouseX;
+//     y1 = mouseY;
+//     console.log(x1, y1);
+//   }
+//   function mouseReleased(){
+//     x2 = mouseX;
+//     y2 = mouseY;
+//   }
+// }

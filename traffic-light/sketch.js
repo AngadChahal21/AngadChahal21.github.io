@@ -21,6 +21,7 @@ function draw() {
   if(state === "green" && millis() > lastSwitchedTime + GREEN_TIME){
     state = "yellow";
     lastSwitchedTime = millis();
+    console.log(state);
   }
 
   //YELLOW

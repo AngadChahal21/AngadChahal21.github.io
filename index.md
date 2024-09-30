@@ -7,4 +7,4 @@
 
 ## Projects 
 
-- [Interactive Scene](interactive-scene)
+- [Interactive Scene](interactiveScene)

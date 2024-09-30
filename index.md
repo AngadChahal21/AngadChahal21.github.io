@@ -3,7 +3,7 @@
 ## Demos 
 - [Square Moving Around Screen](square-moving) 
 - [Image-demo](image-demo)
-- [Traffoc-light](traffic-light)
+- [Traffic-light](traffic-light)
 
 ## Projects 
 

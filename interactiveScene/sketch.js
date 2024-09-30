@@ -9,7 +9,10 @@ let fRate = 0.5 ;
 let lastMoleUpdate = 0; // Keeps track of the last time moles were updated
 let moleDelay = 500; // Time in milliseconds between mole updates (adjust as needed)
 let moleVisibleDuration = 500; 
+let currentMole = -1;
 
+
+let i;
 //images    
 let bg;
 let mole;
@@ -47,8 +50,10 @@ function preload(){
 function setup() {
   createCanvas(windowWidth, windowHeight);
   bg = loadImage('./photos/game-bg-image.png');
-
   blurTab.filter(BLUR, 3);
+
+  currentMole = Math.round(random(1, 6)); // Pick a random mole at the start
+  lastMoleUpdate = millis(); // Initialize the timer
 
 }
 
@@ -93,7 +98,7 @@ function draw() {
 }
 
 function drawHammer() {
-    image(hammer, mouseX - 40, mouseY - 40, 80, 80); // Adjust hammer size and position
+    image(hammer, mouseX - 100, mouseY - 40, 180, 120); // Adjust hammer size and position
   }
 
 function holes(){
@@ -161,37 +166,37 @@ function showMole(i){
 function mousePressed(){
   
   //1
-  if(i === 1 && mouseX >= moleWidth1 - 35 && mouseX <= moleWidth1 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85){
+  if(currentMole === 1 && mouseX >= moleWidth1 - 35 && mouseX <= moleWidth1 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85){
     image(explosion, moleWidth1 - 35, upperMoleHeight - 82 , moleWidthSize, moleHeightSize);
     score++;
   } 
 
   //2
-  if(i === 2 && mouseX >= moleWidth2 - 35 && mouseX <= moleWidth2 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85){
+  if(currentMole=== 2 && mouseX >= moleWidth2 - 35 && mouseX <= moleWidth2 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85){
     image(explosion, moleWidth2 - 35, upperMoleHeight - 82 , moleWidthSize, moleHeightSize);
     score++;
   } 
 
   //3
-  if(i === 3 && mouseX >= moleWidth3 - 35 && mouseX <= moleWidth3 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85){
+  if(currentMole === 3 && mouseX >= moleWidth3 - 35 && mouseX <= moleWidth3 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85){
     image(explosion, moleWidth3 - 35, upperMoleHeight - 82 , moleWidthSize,moleHeightSize);
     score++;
   } 
 
   //4
-  if(i === 4 && mouseX >= moleWidth1 - 35 && mouseX <= moleWidth1 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85){
+  if(currentMole === 4 && mouseX >= moleWidth1 - 35 && mouseX <= moleWidth1 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85){
     image(explosion, moleWidth1 - 35, lowerMoleHeight - 82 + 50, moleWidthSize, moleHeightSize);
     score++;
   } 
 
   //5
-  if(i === 5 && mouseX >= moleWidth2 - 35 && mouseX <= moleWidth2 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85){
+  if(currentMole === 5 && mouseX >= moleWidth2 - 35 && mouseX <= moleWidth2 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85){
     image(explosion, moleWidth2 - 35, lowerMoleHeight - 82 + 50, moleWidthSize, moleHeightSize);
     score++;
   } 
 
   //6
-  if(i === 6 && mouseX >= moleWidth3 - 35 && mouseX <= moleWidth3 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85){
+  if(currentMole === 6 && mouseX >= moleWidth3 - 35 && mouseX <= moleWidth3 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85){
     image(explosion, moleWidth3 - 35, lowerMoleHeight - 82 + 50, moleWidthSize, moleHeightSize);  
     score++;
   }

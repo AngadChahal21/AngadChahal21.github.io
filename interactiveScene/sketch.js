@@ -1,16 +1,16 @@
-// Project Title
-// Your Name
-// Date
+// Whack a mole
+// Angadveer Singh Chahal
+// September 30
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 let fRate = 0.5 ;
 
 let lastMoleUpdate = 0; // Keeps track of the last time moles were updated
-let moleDelay = 2000; // Time in milliseconds between mole updates (adjust as needed)
-let moleVisibleDuration = 1000; 
+let moleDelay = 500; // Time in milliseconds between mole updates (adjust as needed)
+let moleVisibleDuration = 500; 
 
-//images
+//images    
 let bg;
 let mole;
 let blurTab;
@@ -39,7 +39,7 @@ function preload(){
   blurTab = loadImage("./photos/tab.png");
   mole = loadImage("./photos/mole.png");
   explosion = loadImage("./photos/explosion.png");
-  hammer = loadImage("./photos/hammer.jpg");
+  hammer = loadImage("./photos/hammer.png");
 
 }
 
@@ -68,16 +68,24 @@ function draw() {
   textAlign(LEFT, CENTER);
   textFont("times");
   textStyle("bold");
-  text(scoreText + score,20,30);
+  text(scoreText + score,20,30); 
   
-  drawHammer();
+ 
   
 
   holes();
-  if (millis() - lastMoleUpdate > moleDelay) {
-    moles(); // Update moles
+  if (millis() - lastMoleUpdate < moleVisibleDuration && currentMole !== -1) {
+    showMole(currentMole); // Draw the current mole
+  }
+
+  // Update moles only after the mole stays visible for a certain time
+  if (millis() - lastMoleUpdate > moleDelay + moleVisibleDuration) {
+    currentMole = Math.round(random(1, 6)); // Pick a new random mole
     lastMoleUpdate = millis(); // Reset the timer
   }
+
+  drawHammer();
+
   
   if(fRate < 3){
     fRate+= 0.1;
@@ -112,12 +120,12 @@ function holes(){
   ellipse(moleWidth3, lowerMoleHeight + 50, holeWidthSize, holeHeightSize); //3
 }
 
-function moles(){
+function showMole(i){
 
   moleHeightSize = 85;
   moleWidthSize = 70;
   
-  i = Math.round(random(1,6));
+  
   
   
   if(i ===1 ){

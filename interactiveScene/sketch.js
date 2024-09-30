@@ -6,11 +6,16 @@
 // - describe what you did to take this project "above and beyond"
 let fRate = 0.5 ;
 
+let lastMoleUpdate = 0; // Keeps track of the last time moles were updated
+let moleDelay = 2000; // Time in milliseconds between mole updates (adjust as needed)
+let moleVisibleDuration = 1000; 
+
 //images
 let bg;
 let mole;
 let blurTab;
 let explosion;
+let hammer;
 let scoreText =" Score:"
 let score = 0; 
 
@@ -34,6 +39,7 @@ function preload(){
   blurTab = loadImage("./photos/tab.png");
   mole = loadImage("./photos/mole.png");
   explosion = loadImage("./photos/explosion.png");
+  hammer = loadImage("./photos/hammer.jpg");
 
 }
 
@@ -49,10 +55,8 @@ function setup() {
 
 
 function draw() {
-  
-
-
-  frameRate(fRate);
+//   moleDelay;
+  //frameRate(fRate);
   background(bg); //whack a mole base background
 
   tint(200);
@@ -66,14 +70,23 @@ function draw() {
   textStyle("bold");
   text(scoreText + score,20,30);
   
+  drawHammer();
+  
 
   holes();
-  moles();
+  if (millis() - lastMoleUpdate > moleDelay) {
+    moles(); // Update moles
+    lastMoleUpdate = millis(); // Reset the timer
+  }
   
   if(fRate < 3){
     fRate+= 0.1;
   }
 }
+
+function drawHammer() {
+    image(hammer, mouseX - 40, mouseY - 40, 80, 80); // Adjust hammer size and position
+  }
 
 function holes(){
   upperMoleHeight = 1/2 * height;

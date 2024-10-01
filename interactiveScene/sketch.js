@@ -5,7 +5,7 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 let fRate = 0.5 ;
-let gameState = "playing";
+let gameState = "start";
 
 let lastMoleUpdate = 0; // Keeps track of the last time moles were updated
 let moleDelay = 500; // Time in milliseconds between mole updates (adjust as needed)
@@ -77,12 +77,50 @@ function setup() {
 }
 
 
-
 function draw() {
+    background(bg);
+    song.setVolume(slider.value());
+    
+    if (gameState === "start") {
+      startScreen();
+    }
+    else if (gameState === "playing") {
+      drawGame();
+    } 
+    else if (gameState === "end-screen") {
+      endScreen();
+    }
+  }
+
+  function startScreen() {
+    background(0);
+    fill(255);
+    textAlign(CENTER, CENTER);
+    textSize(50);
+    text("Whack-a-Mole", width / 2, height / 2 - 100);
+    
+    textSize(30);
+    text("Play", width / 2, height / 2);
+    text("Sound Settings", width / 2, height / 2 + 60);
+  
+    if (mouseIsPressed) {
+      if (mouseY > height / 2 - 20 && mouseY < height / 2 + 20) {
+        gameState = "playing";  // Start game if "Play" is clicked
+        timer = 30;
+        score = 0;
+      }
+      if (mouseY > height / 2 + 40 && mouseY < height / 2 + 100) {
+        // Sound settings logic can go here
+        console.log("Adjust sound settings");
+      }
+    }
+  }
+  
+
+function drawGame() {
 //   moleDelay;
   //frameRate(fRate);
   background(bg); //whack a mole base background
-  song.setVolume(slider.value());
 
   tint(200);
   image(blurTab,0,0, windowWidth, 1.5/9 * height);
@@ -106,7 +144,6 @@ function draw() {
     gameState = "end-screen";
   }
   
-  if(gameState === "playing"){
     holes();
 
     if (explosionVisible) { // NEW CONDITION
@@ -128,20 +165,11 @@ function draw() {
     }
 
   drawHammer();
-}
 
-if(gameState === "end-screen"){
-    background(endGameBg);
-    endScreen();
-}
-
-  
-  if(fRate < 3){
-    fRate+= 0.1;
-  }
 }
 
 function endScreen(){
+    background(endGameBg);
     fill(255);
     textSize(40);
     textFont("times");

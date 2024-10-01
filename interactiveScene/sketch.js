@@ -48,6 +48,7 @@ let moleWidthSize;
 let moleHeightSize;
 
 let song;
+let slider;
 
 
 function preload(){
@@ -55,23 +56,23 @@ function preload(){
   mole = loadImage("./photos/mole.png");
   explosion = loadImage("./photos/explosion.png");
   hammer = loadImage("./photos/hammer.png");
-
+  
+  song = loadSound("./sounds/bg-music.mp3");
+  
 }
 
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  song = loadSound("./sounds/bg-music.mp3");
   bg = loadImage('./photos/game-bg-image.png');
   endGameBg = loadImage('./photos/endscreen.jpg');
   blurTab.filter(BLUR, 3);
-
+  
+  slider = createSlider(0,1,1,0.01);
+  song.play();
+  
   currentMole = Math.round(random(1, 6)); // Pick a random mole at the start
   lastMoleUpdate = millis(); // Initialize the timer
-
-}
-
-function loaded(){
 
 }
 
@@ -81,6 +82,7 @@ function draw() {
 //   moleDelay;
   //frameRate(fRate);
   background(bg); //whack a mole base background
+  song.setVolume(slider.value());
 
   tint(200);
   image(blurTab,0,0, windowWidth, 1.5/9 * height);

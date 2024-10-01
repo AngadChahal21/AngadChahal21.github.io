@@ -20,6 +20,7 @@ let lastTimeUpdate = 0;
 let timerDelay = 1000;
 
 let i;
+
 //images    
 let bg;
 let endGameBg;
@@ -27,8 +28,8 @@ let mole;
 let blurTab;
 let explosion;
 let hammer;
-let scoreText =" Score:"
-let timerText = "Time left:"
+let scoreText =" Score:";
+let timerText = "Time left:";
 let score = 0; 
 let timer = 30;
 
@@ -57,64 +58,73 @@ function preload(){
   explosion = loadImage("./photos/explosion.png");
   hammer = loadImage("./photos/hammer.png");
   
-  song = loadSound("./sounds/bg-music.mp3");
+  
   
 }
 
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  bg = loadImage('./photos/game-bg-image.png');
-  endGameBg = loadImage('./photos/endscreen.jpg');
+  bg = loadImage("./photos/game-bg-image.png");
+  endGameBg = loadImage("./photos/endscreen.jpg");
   blurTab.filter(BLUR, 3);
-  
+
   slider = createSlider(0,1,1,0.01);
-  song.play();
+  slider.position(1/2 * windowWidth - 50,10);
+  slider.size(100);
   
+  fill(255);
+  text("sound", 1/2 * windowWidth - 50, 10 );
+  
+  song = loadSound("./sounds/bg-music.mp3", loaded);
+
   currentMole = Math.round(random(1, 6)); // Pick a random mole at the start
   lastMoleUpdate = millis(); // Initialize the timer
 
 }
 
+function loaded(){   //callback function
+  song.play();
+}
+
 
 function draw() {
-    background(bg);
-    song.setVolume(slider.value());
-    
-    if (gameState === "start") {
-      startScreen();
-    }
-    else if (gameState === "playing") {
-      drawGame();
-    } 
-    else if (gameState === "end-screen") {
-      endScreen();
-    }
+  background(bg);
+  
+  
+  if (gameState === "start") {
+    startScreen();
   }
 
-  function startScreen() {
-    background(0);
-    fill(255);
-    textAlign(CENTER, CENTER);
-    textSize(50);
-    text("Whack-a-Mole", width / 2, height / 2 - 100);
-    
-    textSize(30);
-    text("Play", width / 2, height / 2);
-    text("Sound Settings", width / 2, height / 2 + 60);
-  
-    if (mouseIsPressed) {
-      if (mouseY > height / 2 - 20 && mouseY < height / 2 + 20) {
-        gameState = "playing";  // Start game if "Play" is clicked
-        timer = 30;
-        score = 0;
-      }
-      if (mouseY > height / 2 + 40 && mouseY < height / 2 + 100) {
-        // Sound settings logic can go here
-        console.log("Adjust sound settings");
-      }
-    }
+  else if (gameState === "playing") {
+    drawGame();
+  } 
+  else if (gameState === "end-screen") {
+    endScreen();
   }
+}
+
+function startScreen() {
+  background(0);
+  fill(255);
+  textAlign(CENTER, CENTER);
+  textSize(50);
+  text("Whack-a-Mole", width / 2, height / 2 - 100);
+  
+  textSize(30);
+  text("Play", width / 2, height / 2);
+  
+
+  if (mouseIsPressed) {
+    if (mouseY > height / 2 - 20 && mouseY < height / 2 + 20) {
+      gameState = "playing";  // Start game if "Play" is clicked
+      timer = 30;
+      score = 0;
+    }
+    
+  }
+}
+
   
 
 function drawGame() {
@@ -144,42 +154,55 @@ function drawGame() {
     gameState = "end-screen";
   }
   
-    holes();
+  holes();
 
-    if (explosionVisible) { // NEW CONDITION
-        if (millis() - explosionStartTime < explosionDuration) { // NEW TIMER CHECK
-        showExplosion(currentMole); // Call explosion instead of mole (NEW)
-        } else {
-        explosionVisible = false; // End the explosion effect after duration (NEW)
-        }
+  if (explosionVisible) { // NEW CONDITION
+    if (millis() - explosionStartTime < explosionDuration) { // NEW TIMER CHECK
+      showExplosion(currentMole); // Call explosion instead of mole (NEW)
     } 
-
-    if (millis() - lastMoleUpdate < moleVisibleDuration && currentMole !== -1) {
-        showMole(currentMole); // Draw the current mole
+    else {
+      explosionVisible = false; // End the explosion effect after duration (NEW)
     }
+  } 
 
-    // Update moles only after the mole stays visible for a certain time
-    if (!explosionVisible && millis() - lastMoleUpdate > moleDelay + moleVisibleDuration) {
-        currentMole = Math.round(random(1, 6)); // Pick a new random mole
-        lastMoleUpdate = millis(); // Reset the timer
-    }
+  if (millis() - lastMoleUpdate < moleVisibleDuration && currentMole !== -1) {
+    showMole(currentMole); // Draw the current mole
+  }
+
+  // Update moles only after the mole stays visible for a certain time
+  if (!explosionVisible && millis() - lastMoleUpdate > moleDelay + moleVisibleDuration) {
+    currentMole = Math.round(random(1, 6)); // Pick a new random mole
+    lastMoleUpdate = millis(); // Reset the timer
+  }
 
   drawHammer();
 
 }
 
 function endScreen(){
-    background(endGameBg);
-    fill(255);
-    textSize(40);
-    textFont("times");
-    textStyle("bold");
-    text("Final Score:" + score, width/2 - 150, 3/4 * height, 320);
+  background(endGameBg);
+  fill(255);
+  textSize(40);
+  textFont("times");
+  textStyle("bold");
+  //text("Final Score:" + score, width/2 - 150, 3/4 * height, 320);
+
+  textSize(30);
+  text("Back to Home", width / 2, height / 2 + 200);
+  
+
+  if (mouseIsPressed) {
+    if (mouseY > height / 2 - 20 && mouseY < height / 2 + 20 + 200) {
+      gameState = "start";  
+    }
+    
+  }
+
 }
 
 function drawHammer() {
-    image(hammer, mouseX - 100, mouseY - 40, 180, 120); // Adjust hammer size and position
-  }
+  image(hammer, mouseX - 100, mouseY - 40, 180, 120); // Adjust hammer size and position
+}
 
 function holes(){
   upperMoleHeight = 1/2 * height;
@@ -284,21 +307,26 @@ function mousePressed(){
  
 } */
 
-  function showExplosion(i) { // NEW FUNCTION
+function showExplosion(i) { // NEW FUNCTION
   moleHeightSize = 85;
   moleWidthSize = 70;
   
   if (i === 1) {
     image(explosion, moleWidth1 - 35, upperMoleHeight - 82, moleWidthSize, moleHeightSize);
-  } else if (i === 2) {
+  }
+  else if (i === 2) {
     image(explosion, moleWidth2 - 35, upperMoleHeight - 82, moleWidthSize, moleHeightSize);
-  } else if (i === 3) {
+  }
+  else if (i === 3) {
     image(explosion, moleWidth3 - 35, upperMoleHeight - 82, moleWidthSize, moleHeightSize);
-  } else if (i === 4) {
+  } 
+  else if (i === 4) {
     image(explosion, moleWidth1 - 35, lowerMoleHeight - 82 + 50, moleWidthSize, moleHeightSize);
-  } else if (i === 5) {
+  } 
+  else if (i === 5) {
     image(explosion, moleWidth2 - 35, lowerMoleHeight - 82 + 50, moleWidthSize, moleHeightSize);
-  } else if (i === 6) {
+  } 
+  else if (i === 6) {
     image(explosion, moleWidth3 - 35, lowerMoleHeight - 82 + 50, moleWidthSize, moleHeightSize);
   }
 }
@@ -306,15 +334,20 @@ function mousePressed(){
 function mousePressed() {
   if (currentMole === 1 && mouseX >= moleWidth1 - 35 && mouseX <= moleWidth1 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85) {
     triggerExplosion(); // Changed to trigger explosion (NEW)
-  } else if (currentMole === 2 && mouseX >= moleWidth2 - 35 && mouseX <= moleWidth2 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85) {
+  } 
+  else if (currentMole === 2 && mouseX >= moleWidth2 - 35 && mouseX <= moleWidth2 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85) {
     triggerExplosion(); // Changed to trigger explosion (NEW)
-  } else if (currentMole === 3 && mouseX >= moleWidth3 - 35 && mouseX <= moleWidth3 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85) {
+  } 
+  else if (currentMole === 3 && mouseX >= moleWidth3 - 35 && mouseX <= moleWidth3 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85) {
     triggerExplosion(); // Changed to trigger explosion (NEW)
-  } else if (currentMole === 4 && mouseX >= moleWidth1 - 35 && mouseX <= moleWidth1 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85) {
+  } 
+  else if (currentMole === 4 && mouseX >= moleWidth1 - 35 && mouseX <= moleWidth1 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85) {
     triggerExplosion(); // Changed to trigger explosion (NEW)
-  } else if (currentMole === 5 && mouseX >= moleWidth2 - 35 && mouseX <= moleWidth2 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85) {
+  } 
+  else if (currentMole === 5 && mouseX >= moleWidth2 - 35 && mouseX <= moleWidth2 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85) {
     triggerExplosion(); // Changed to trigger explosion (NEW)
-  } else if (currentMole === 6 && mouseX >= moleWidth3 - 35 && mouseX <= moleWidth3 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85) {
+  } 
+  else if (currentMole === 6 && mouseX >= moleWidth3 - 35 && mouseX <= moleWidth3 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85) {
     triggerExplosion(); // Changed to trigger explosion (NEW)
   }
 }

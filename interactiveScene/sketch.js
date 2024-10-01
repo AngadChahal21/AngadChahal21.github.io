@@ -1,24 +1,28 @@
 // Whack a mole
 // Angadveer Singh Chahal
 // September 30
-//
+
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
-let fRate = 0.5 ;
+
 let gameState = "start";
 
-let lastMoleUpdate = 0; // Keeps track of the last time moles were updated
-let moleDelay = 500; // Time in milliseconds between mole updates (adjust as needed)
+//Mole updating data
+let lastMoleUpdate = 0; 
+let moleDelay = 500; 
 let moleVisibleDuration = 500; 
 let currentMole = -1;
 
-let explosionVisible = false; // Track if explosion is visible (NEW)
-let explosionStartTime = 0;    // Track when the explosion started (NEW)
+//explosion update data
+let explosionVisible = false; 
+let explosionStartTime = 0;    
 let explosionDuration = 300;
 
+//Timer update data
 let lastTimeUpdate = 0;
 let timerDelay = 1000;
 
+//actual parameter for showMole
 let i;
 
 //images    
@@ -28,8 +32,12 @@ let mole;
 let blurTab;
 let explosion;
 let hammer;
+
+//Texts
 let scoreText =" Score:";
 let timerText = "Time left:";
+
+//Game progress data
 let score = 0; 
 let timer = 30;
 
@@ -48,6 +56,7 @@ let holeHeightSize;
 let moleWidthSize;
 let moleHeightSize;
 
+//sound variables
 let song;
 let slider;
 

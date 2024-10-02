@@ -59,7 +59,7 @@ let moleHeightSize;
 //sound variables
 let song;
 let slider;
-
+let explosionSound;
 let isSongPlaying = false;
 
 function preload(){
@@ -68,6 +68,7 @@ function preload(){
   explosion = loadImage("./photos/explosion.png");
 
   song = loadSound("./sounds/bgMusic.mp3");
+  explosionSound = loadSound("./sounds/explosion.wav");
 
   hammer = loadImage("./photos/hammer.png");
   
@@ -324,21 +325,27 @@ function showExplosion(i) { // NEW FUNCTION
   
   if (i === 1) {
     image(explosion, moleWidth1 - 35, upperMoleHeight - 82, moleWidthSize, moleHeightSize);
+    explosionSound.play();
   }
   else if (i === 2) {
     image(explosion, moleWidth2 - 35, upperMoleHeight - 82, moleWidthSize, moleHeightSize);
+    explosionSound.play();
   }
   else if (i === 3) {
     image(explosion, moleWidth3 - 35, upperMoleHeight - 82, moleWidthSize, moleHeightSize);
+    explosionSound.play();
   } 
   else if (i === 4) {
     image(explosion, moleWidth1 - 35, lowerMoleHeight - 82 + 50, moleWidthSize, moleHeightSize);
+    explosionSound.play();
   } 
   else if (i === 5) {
     image(explosion, moleWidth2 - 35, lowerMoleHeight - 82 + 50, moleWidthSize, moleHeightSize);
+    explosionSound.play();
   } 
   else if (i === 6) {
     image(explosion, moleWidth3 - 35, lowerMoleHeight - 82 + 50, moleWidthSize, moleHeightSize);
+    explosionSound.play();
   }
 }
 

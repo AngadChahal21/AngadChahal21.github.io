@@ -60,14 +60,19 @@ let moleHeightSize;
 let song;
 let slider;
 
+let isSongPlaying = false;
 
 function preload(){
   blurTab = loadImage("./photos/tab.png");
   mole = loadImage("./photos/mole.png");
   explosion = loadImage("./photos/explosion.png");
+
+  song = loadSound("./sounds/bgMusic.mp3");
+
   hammer = loadImage("./photos/hammer.png");
   
   
+
   
 }
 
@@ -81,25 +86,19 @@ function setup() {
   slider = createSlider(0,1,1,0.01);
   slider.position(1/2 * windowWidth - 50,10);
   slider.size(100);
+  song.loop();
   
-  fill(255);
-  text("sound", 1/2 * windowWidth - 50, 10 );
-  
-  song = loadSound("./sounds/bg-music.mp3", loaded);
 
   currentMole = Math.round(random(1, 6)); // Pick a random mole at the start
   lastMoleUpdate = millis(); // Initialize the timer
 
 }
 
-function loaded(){   //callback function
-  song.play();
-}
 
 
 function draw() {
   background(bg);
-  
+  song.setVolume(slider.value());
   
   if (gameState === "start") {
     startScreen();
@@ -129,6 +128,7 @@ function startScreen() {
       gameState = "playing";  // Start game if "Play" is clicked
       timer = 30;
       score = 0;
+      song.loop();
     }
     
   }
@@ -189,23 +189,25 @@ function drawGame() {
 }
 
 function endScreen(){
-  background(endGameBg);
-  fill(255);
-  textSize(40);
-  textFont("times");
-  textStyle("bold");
-  //text("Final Score:" + score, width/2 - 150, 3/4 * height, 320);
+    background(endGameBg);
+    fill(255);
+    textSize(40);
+    textFont("times");
+    textStyle("bold");
+    textAlign(CENTER, CENTER); // Set text alignment to center
+    text("Final Score: " + score, width / 2, height / 2 - 50); // Center final score
 
-  textSize(30);
-  text("Back to Home", width / 2, height / 2 + 200);
-  
+    textSize(30);
+    text("Back to Home", width / 2, height / 2 + 50); // Center "Back to Home"
 
-  if (mouseIsPressed) {
-    if (mouseY > height / 2 - 20 && mouseY < height / 2 + 20 + 200) {
-      gameState = "start";  
+    // Check if mouse is pressed in the designated area
+    if (mouseIsPressed) {
+        if (mouseY >= height / 2 + 30 && mouseY <= height / 2 + 80) {
+            gameState = "start";  // Transition back to the start screen
+            score = 0;            // Reset score for new game
+            timer = 30;           // Reset timer for new game
+        }
     }
-    
-  }
 
 }
 

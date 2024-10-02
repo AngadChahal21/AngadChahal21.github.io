@@ -3,7 +3,9 @@
 // September 30
 
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// - Used concepts from p5 js sound. Used it to implement background music as well as explosion sounds to enhance
+// the experience of the game. Used slider to be able to control the background music volume throughout the game
+// - used the filter function to blur the upper tab of the game. 
 
 let gameState = "start";
 
@@ -60,6 +62,7 @@ let moleHeightSize;
 let song;
 let slider;
 let explosionSound;
+let click;
 let isSongPlaying = false;
 
 function preload(){
@@ -69,12 +72,10 @@ function preload(){
 
   song = loadSound("./sounds/bgMusic.mp3");
   explosionSound = loadSound("./sounds/explosion.wav");
+  click = loadSound("./sounds/click.mp3");
+  click.setVolume(5);
 
   hammer = loadImage("./photos/hammer.png");
-  
-  
-
-  
 }
 
 
@@ -99,17 +100,17 @@ function setup() {
 
 function draw() {
   background(bg);
-  song.setVolume(slider.value());
+  song.setVolume(slider.value()); 
   
   if (gameState === "start") {
-    startScreen();
+    startScreen();      //starting menu
   }
 
   else if (gameState === "playing") {
-    drawGame();
+    drawGame(); //actual game
   } 
   else if (gameState === "end-screen") {
-    endScreen();
+    endScreen(); //end screen 
   }
 }
 
@@ -126,7 +127,8 @@ function startScreen() {
 
   if (mouseIsPressed) {
     if (mouseY > height / 2 - 20 && mouseY < height / 2 + 20) {
-      gameState = "playing";  // Start game if "Play" is clicked
+      click.play();
+      gameState = "playing";  
       timer = 30;
       score = 0;
       song.loop();
@@ -138,16 +140,14 @@ function startScreen() {
   
 
 function drawGame() {
-//   moleDelay;
-  //frameRate(fRate);
   background(bg); //whack a mole base background
 
   tint(200);
   image(blurTab,0,0, windowWidth, 1.5/9 * height);
   noTint();
   
-  fill(255); // Set text color to white (or any contrasting color)
-  textSize(32); // Set text size
+  fill(255);
+  textSize(32); 
   textAlign(LEFT, CENTER);
   textFont("times");
   textStyle("bold");
@@ -155,9 +155,9 @@ function drawGame() {
 
   text(timerText + timer, windowWidth - 200, 30);
   
-  if (millis() - lastTimeUpdate >= timerDelay && timer > 0) { // Check if it's time to update the timer and if timer is not finished
-    timer--; // Decrease the timer
-    lastTimeUpdate = millis(); // Reset the timer update time
+  if (millis() - lastTimeUpdate >= timerDelay && timer > 0) { 
+    timer--; 
+    lastTimeUpdate = millis(); 
   }
 
   if(timer<=0){
@@ -166,23 +166,23 @@ function drawGame() {
   
   holes();
 
-  if (explosionVisible) { // NEW CONDITION
-    if (millis() - explosionStartTime < explosionDuration) { // NEW TIMER CHECK
-      showExplosion(currentMole); // Call explosion instead of mole (NEW)
+  if (explosionVisible) { 
+    if (millis() - explosionStartTime < explosionDuration) { 
+      showExplosion(currentMole); 
     } 
     else {
-      explosionVisible = false; // End the explosion effect after duration (NEW)
+      explosionVisible = false; 
     }
   } 
 
   if (millis() - lastMoleUpdate < moleVisibleDuration && currentMole !== -1) {
-    showMole(currentMole); // Draw the current mole
+    showMole(currentMole); 
   }
 
-  // Update moles only after the mole stays visible for a certain time
+  
   if (!explosionVisible && millis() - lastMoleUpdate > moleDelay + moleVisibleDuration) {
-    currentMole = Math.round(random(1, 6)); // Pick a new random mole
-    lastMoleUpdate = millis(); // Reset the timer
+    currentMole = Math.round(random(1, 6)); 
+    lastMoleUpdate = millis(); 
   }
 
   drawHammer();
@@ -195,25 +195,26 @@ function endScreen(){
     textSize(40);
     textFont("times");
     textStyle("bold");
-    textAlign(CENTER, CENTER); // Set text alignment to center
-    text("Final Score: " + score, width / 2, height / 2 - 50); // Center final score
+    textAlign(CENTER, CENTER); 
+    text("Final Score: " + score, width / 2, height / 2 - 50); 
 
     textSize(30);
-    text("Back to Home", width / 2, height / 2 + 50); // Center "Back to Home"
+    text("Back to Home", width / 2, height / 2 + 50);
 
-    // Check if mouse is pressed in the designated area
+    
     if (mouseIsPressed) {
         if (mouseY >= height / 2 + 30 && mouseY <= height / 2 + 80) {
-            gameState = "start";  // Transition back to the start screen
-            score = 0;            // Reset score for new game
-            timer = 30;           // Reset timer for new game
+            click.play();
+            gameState = "start";  
+            score = 0;            
+            timer = 30;           
         }
     }
 
 }
 
 function drawHammer() {
-  image(hammer, mouseX - 100, mouseY - 40, 180, 120); // Adjust hammer size and position
+  image(hammer, mouseX - 100, mouseY - 40, 180, 120);
 }
 
 function holes(){
@@ -319,7 +320,7 @@ function mousePressed(){
  
 } */
 
-function showExplosion(i) { // NEW FUNCTION
+function showExplosion(i) { 
   moleHeightSize = 85;
   moleWidthSize = 70;
   
@@ -351,27 +352,27 @@ function showExplosion(i) { // NEW FUNCTION
 
 function mousePressed() {
   if (currentMole === 1 && mouseX >= moleWidth1 - 35 && mouseX <= moleWidth1 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85) {
-    triggerExplosion(); // Changed to trigger explosion (NEW)
+    triggerExplosion(); 
   } 
   else if (currentMole === 2 && mouseX >= moleWidth2 - 35 && mouseX <= moleWidth2 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85) {
-    triggerExplosion(); // Changed to trigger explosion (NEW)
+    triggerExplosion(); 
   } 
   else if (currentMole === 3 && mouseX >= moleWidth3 - 35 && mouseX <= moleWidth3 + 35 && mouseY >= upperMoleHeight - 82 && mouseY <= upperMoleHeight - 82 + 85) {
-    triggerExplosion(); // Changed to trigger explosion (NEW)
+    triggerExplosion(); 
   } 
   else if (currentMole === 4 && mouseX >= moleWidth1 - 35 && mouseX <= moleWidth1 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85) {
-    triggerExplosion(); // Changed to trigger explosion (NEW)
+    triggerExplosion(); 
   } 
   else if (currentMole === 5 && mouseX >= moleWidth2 - 35 && mouseX <= moleWidth2 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85) {
-    triggerExplosion(); // Changed to trigger explosion (NEW)
+    triggerExplosion(); 
   } 
   else if (currentMole === 6 && mouseX >= moleWidth3 - 35 && mouseX <= moleWidth3 + 35 && mouseY >= lowerMoleHeight - 82 + 50 && mouseY <= lowerMoleHeight - 82 + 50 + 85) {
-    triggerExplosion(); // Changed to trigger explosion (NEW)
+    triggerExplosion(); 
   }
 }
 
-function triggerExplosion() { // NEW FUNCTION
-  explosionVisible = true; // Set explosion visibility
-  explosionStartTime = millis(); // Start the explosion timer
-  score++; // Increment score
+function triggerExplosion() { 
+  explosionVisible = true; 
+  explosionStartTime = millis(); 
+  score++; 
 }

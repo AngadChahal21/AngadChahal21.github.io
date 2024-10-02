@@ -3,7 +3,7 @@
 // September 30
 
 // Extra for Experts:
-// - Used concepts from p5 js sound. Used it to implement background music as well as explosion sounds to enhance
+// - Used concepts from p5 js sound. Used it to implement background music as well as explosion sounds and button clicks to enhance
 // the experience of the game. Used slider to be able to control the background music volume throughout the game
 // - used the filter function to blur the upper tab of the game. 
 
@@ -151,16 +151,16 @@ function drawGame() {
   textAlign(LEFT, CENTER);
   textFont("times");
   textStyle("bold");
-  text(scoreText + score,20,30); 
+  text(scoreText + score,20,30); //score record
 
-  text(timerText + timer, windowWidth - 200, 30);
+  text(timerText + timer, windowWidth - 200, 30); //timer records
   
-  if (millis() - lastTimeUpdate >= timerDelay && timer > 0) { 
+  if (millis() - lastTimeUpdate >= timerDelay && timer > 0) {  //update timer
     timer--; 
     lastTimeUpdate = millis(); 
   }
 
-  if(timer<=0){
+  if(timer<=0){   ///end the game
     gameState = "end-screen";
   }
   
@@ -181,7 +181,7 @@ function drawGame() {
 
   
   if (!explosionVisible && millis() - lastMoleUpdate > moleDelay + moleVisibleDuration) {
-    currentMole = Math.round(random(1, 6)); 
+    currentMole = Math.round(random(1, 6)); //random mole 
     lastMoleUpdate = millis(); 
   }
 
@@ -199,7 +199,7 @@ function endScreen(){
     text("Final Score: " + score, width / 2, height / 2 - 50); 
 
     textSize(30);
-    text("Back to Home", width / 2, height / 2 + 50);
+    text("Back to Home", width / 2, height / 2 + 50); //redirects to the start screen using state variables
 
     
     if (mouseIsPressed) {
@@ -320,7 +320,7 @@ function mousePressed(){
  
 } */
 
-function showExplosion(i) { 
+function showExplosion(i) { //shows explosion and starts sound
   moleHeightSize = 85;
   moleWidthSize = 70;
   

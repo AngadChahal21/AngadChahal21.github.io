@@ -6,7 +6,8 @@
 - [Traffic light](traffic-light)
 - [Bouncing Balls](bouncing-balls)
 - [Generative Art](art)
-- [Perlin Noise Ball](perlin);
+- [Perlin Noise Ball](perlin)
+- [Terrain Generation](terrainP)
 
 ## Projects 
 

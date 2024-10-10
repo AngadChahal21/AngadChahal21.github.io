@@ -26,15 +26,26 @@ Maze generation using Prim's  algorithm https://www.youtube.com/watch?v=BxabnKrO
 Maze solution using Depth First Search algorithm https://medium.com/swlh/solving-mazes-with-depth-first-search-e315771317ae
 
 */
+
+let myFont;
+function preload(){
+  myFont = loadFont('PressStart2P-Regular.ttf');
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
 }
 
 function draw() {
   background(220);
+  startScreen();
 }
 
 function startScreen(){
   background(0);
-  text("Maze Mania", width/2, height/2); 
+  fill(255);
+  textFont(myFont);
+  textAlign(CENTER, CENTER);
+  textSize(70);
+  text("Maze Mania", width / 2, height / 2 - 100); 
 }

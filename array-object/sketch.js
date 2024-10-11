@@ -26,7 +26,6 @@ Maze generation using Prim's  algorithm https://www.youtube.com/watch?v=BxabnKrO
 Maze solution using Depth First Search algorithm https://medium.com/swlh/solving-mazes-with-depth-first-search-e315771317ae
 
 */
-
 let myFont;
 function preload(){
   myFont = loadFont('PressStart2P-Regular.ttf');
@@ -34,6 +33,8 @@ function preload(){
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  let div = createDiv('');
+  div.center();
 }
 
 function draw() {
@@ -42,10 +43,31 @@ function draw() {
 }
 
 function startScreen(){
+  let buttonWidth = width/2;
+  let buttonHeight = 3/5 * height;
+
+
   background(0);
   fill(255);
   textFont(myFont);
   textAlign(CENTER, CENTER);
   textSize(70);
   text("Maze Mania", width / 2, height / 2 - 100); 
+  fill("yellow");
+  rectMode(CENTER);
+  let rectangle = rect(buttonWidth,buttonHeight ,400 ,100 ,50); //draw button 
+  
+  fill("black");
+  textSize(25);
+  text("Click to start", buttonWidth, buttonHeight);
+
+  if(mouseX < buttonWidth + 200 && mouseX > buttonWidth - 200 && mouseY > buttonHeight - 50 && mouseY < buttonHeight + 50){
+    buttonAnimation();
+  }
+}
+
+function buttonAnimation(){
+  fill(150, 150, 0);
+  rect(width/2, 3/5 * height ,400 ,100 ,50);
+  text("Click to start", buttonWidth, buttonHeight);      
 }

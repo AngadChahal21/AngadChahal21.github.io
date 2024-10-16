@@ -26,9 +26,13 @@ Maze generation using Prim's  algorithm https://www.youtube.com/watch?v=BxabnKrO
 Maze solution using Depth First Search algorithm https://medium.com/swlh/solving-mazes-with-depth-first-search-e315771317ae
 
 */
+
+//load font
 let myFont;
+let img;
 function preload(){
   myFont = loadFont('PressStart2P-Regular.ttf');
+  img = loadImage('./pictures/bg.avif');
 }
 
 function setup() {
@@ -39,35 +43,50 @@ function setup() {
 
 function draw() {
   background(220);
-  startScreen();
+  //startScreen();
+  endScreen();
 }
 
-function startScreen(){
-  let buttonWidth = width/2;
-  let buttonHeight = 3/5 * height;
-
-
+function endScreen(){
   background(0);
+  let confetti = [];
+  
+}
+
+//start screen
+function startScreen(){
+  let buttonX = width/2;
+  let buttonY = 3/5 * height;
+  background(img);
+
+  let fontSize = map(width, 0, 1000, 10, 65); // calculating responsive font size
+
+  //Title text
   fill(255);
   textFont(myFont);
   textAlign(CENTER, CENTER);
-  textSize(70);
+  textSize(fontSize);
   text("Maze Mania", width / 2, height / 2 - 100); 
-  fill("yellow");
-  rectMode(CENTER);
-  let rectangle = rect(buttonWidth,buttonHeight ,400 ,100 ,50); //draw button 
-  
-  fill("black");
-  textSize(25);
-  text("Click to start", buttonWidth, buttonHeight);
 
-  if(mouseX < buttonWidth + 200 && mouseX > buttonWidth - 200 && mouseY > buttonHeight - 50 && mouseY < buttonHeight + 50){
-    buttonAnimation();
+  //button hovered
+  if(mouseX < buttonX + 200 && mouseX > buttonX - 200 && mouseY > buttonY - 50 && mouseY < buttonY + 50){
+    fill(150, 150, 0);
+    rect(buttonX, buttonY ,300 ,70 ,50);
+    fill(0);
+    textSize(15);
+    text("Click to start", buttonX, buttonY);  
   }
-}
 
-function buttonAnimation(){
-  fill(150, 150, 0);
-  rect(width/2, 3/5 * height ,400 ,100 ,50);
-  text("Click to start", buttonWidth, buttonHeight);      
+  //button normal
+  else{
+    //button
+    fill("yellow");
+    rectMode(CENTER);
+    let rectangle = rect(buttonX,buttonY ,300 ,70 ,50); //draw button 
+    
+    //button text
+    fill("black");
+    textSize(15);
+    text("Click to start", buttonX, buttonY);
+  }
 }

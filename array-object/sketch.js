@@ -25,11 +25,16 @@ https://www.reddit.com/r/p5js/comments/1djme24/ive_been_addicted_to_playing_bitb
 Maze generation using Prim's  algorithm https://www.youtube.com/watch?v=BxabnKrOjT0      https://github.com/ian-howell/Mazes
 Maze solution using Depth First Search algorithm https://medium.com/swlh/solving-mazes-with-depth-first-search-e315771317ae
 
+
+https://vishald.com/blog/kruskals-maze-generation/
 */
 
 //load font
 let myFont;
 let img;
+let gameState = "startScreen";
+let reached = [];
+;et unreached = [];
 function preload(){
   myFont = loadFont('PressStart2P-Regular.ttf');
   img = loadImage('./pictures/bg.avif');
@@ -43,8 +48,16 @@ function setup() {
 
 function draw() {
   background(220);
-  //startScreen();
-  endScreen();
+  if(gameState === "startScreen"){
+    startScreen();
+  }
+  else if(gameState === "startGame"){
+    startGame();
+  }
+  else if(gameState === "endScreen"){
+    endScreen();
+  }
+  //endScreen();
 }
 
 function endScreen(){
@@ -75,6 +88,10 @@ function startScreen(){
     fill(0);
     textSize(15);
     text("Click to start", buttonX, buttonY);  
+
+    if(mouseIsPressed){
+      gameState = "startGame";
+    }
   }
 
   //button normal
@@ -88,5 +105,16 @@ function startScreen(){
     fill("black");
     textSize(15);
     text("Click to start", buttonX, buttonY);
+  }
+}
+
+function startGame(){
+  background(0);
+  for(let i = 50; i < width; i+=100){
+    for(let j = 50; j < height; j+=100){
+      fill("green");
+      noStroke();
+      rect(i,j,50,50);
+    }
   }
 }

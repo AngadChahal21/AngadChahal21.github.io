@@ -9,9 +9,10 @@
 - [Perlin Noise Ball](perlin)
 - [Terrain Generation](terrain)
 - [Bubble Demo](bubble)
+- [Translate/Rotate](translate)
 
 ## Projects 
 
 - [Interactive Scene](interactiveScene)
 - [Arrays and Object Notatiion](array-object)
-- [End Screen](end-screen)`
+- [End Screen](end-screen)

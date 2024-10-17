@@ -29,12 +29,19 @@ Maze solution using Depth First Search algorithm https://medium.com/swlh/solving
 https://vishald.com/blog/kruskals-maze-generation/
 */
 
-//load font
-let myFont;
-let img;
-let gameState = "startScreen";
-let reached = [];
-let unreached = [];
+
+// let reached = [];
+// let unreached = [];
+let myFont; //load font
+let img; //background image 
+let gameState = "startScreen"; // state variables
+
+let cols, rows;
+let cellSize = 30;
+let id;
+let grid = []
+
+//preloading images and fonts
 function preload(){
   myFont = loadFont('PressStart2P-Regular.ttf');
   img = loadImage('./pictures/bg.avif');
@@ -42,8 +49,17 @@ function preload(){
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  let div = createDiv('');
-  div.center();
+  cols = floor(height/cellSize);
+  rows = floor(height/cellSize);
+
+  //assigning and storing unique IDs to each cell
+  for(let i = 0; i < rows; i++){
+    for(let j = 0; j < cols; j++){
+      id = i * cols + j; //unique ID for each cell 
+      grid.push({i:i,   j:j,  red:random(255),  green:random(255),  blue:random(255), id:id, walls:[true, true, true, true]});
+    }
+  }
+  console.log(grid);
 }
 
 function draw() {
@@ -118,11 +134,18 @@ function startGame(){
   //   }
   // }
 
-  for(let i = width/21 ; i < width - width/21; i+= width/20 * 2){
-    for(let j = height/21 * 2 ; j < height - height/21; j+= width/20 * 2){
-      fill("green");
-      noStroke();
-      rect(i,j, width/20, width/20);
+  // for(let i = width/21 ; i < width - width/21; i+= width/20 * 2){
+  //   for(let j = height/21 * 2 ; j < height - height/21; j+= width/20 * 2){
+  //     fill("green");
+  //     noStroke();
+  //     rect(i,j, width/20, width/20);
+  //   }
+  // }
+  for(let i = 0; i < rows; i += cellSize){
+    for(let j = 0; j < cols; j += cellSize){
+      square(i, j, cellSize);
     }
   }
+
+  
 }

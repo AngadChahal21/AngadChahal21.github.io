@@ -34,7 +34,7 @@ let myFont;
 let img;
 let gameState = "startScreen";
 let reached = [];
-;et unreached = [];
+let unreached = [];
 function preload(){
   myFont = loadFont('PressStart2P-Regular.ttf');
   img = loadImage('./pictures/bg.avif');
@@ -109,12 +109,20 @@ function startScreen(){
 }
 
 function startGame(){
-  background(0);
-  for(let i = 50; i < width; i+=100){
-    for(let j = 50; j < height; j+=100){
+  background(220);
+  // for(let i = 50; i < width; i += 100 ){
+  //   for(let j = 50; j < height; j += 100){
+  //     fill("green");
+  //     noStroke();
+  //     rect(i,j,50,50);
+  //   }
+  // }
+
+  for(let i = width/21 ; i < width - width/21; i+= width/20 * 2){
+    for(let j = height/21 * 2 ; j < height - height/21; j+= width/20 * 2){
       fill("green");
       noStroke();
-      rect(i,j,50,50);
+      rect(i,j, width/20, width/20);
     }
   }
 }

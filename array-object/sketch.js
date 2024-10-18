@@ -39,7 +39,9 @@ let gameState = "startScreen"; // state variables
 let cols, rows;
 let cellSize = 30;
 let id;
-let grid = []
+let grid = [];
+let colours = [];
+let edges = [];
 
 //preloading images and fonts
 function preload(){
@@ -56,11 +58,26 @@ function setup() {
   for(let i = 0; i < rows; i++){
     for(let j = 0; j < cols; j++){
       id = i * cols + j; //unique ID for each cell 
-      grid.push({i:i,   j:j,  red:random(255),  green:random(255),  blue:random(255), id:id, walls:[true, true, true, true]});
+      grid.push({i:i,   j:j, id:id, walls:[true, true, true, true]});
+      colours[id] = color(random(255), random(255), random(255));
     }
   }
-  console.log(grid);
+
+  //storing edges in an array
+  let a = 0;
+  for(let i = 0; i < rows; i ++){
+    for(let j = 0; j < cols; j ++){
+      edges.push([grid[a].i * cellSize, grid[a].j * cellSize + cellSize]); //bottom edge of every cell
+      edges.push(grid[a].i * cellSize + cellSize, grid[a].j * cellSize); //right edge of every cell 
+    }
+    a++;
+  }
+
+  shuffle(edges, true); // shuffle all edges in  the array 
 }
+
+console.log(grid);
+
 
 function draw() {
   background(220);
@@ -76,6 +93,7 @@ function draw() {
   //endScreen();
 }
 
+//endscreen
 function endScreen(){
   background(0);
   let confetti = [];
@@ -141,11 +159,46 @@ function startGame(){
   //     rect(i,j, width/20, width/20);
   //   }
   // }
-  for(let i = 0; i < rows; i += cellSize){
-    for(let j = 0; j < cols; j += cellSize){
-      square(i, j, cellSize);
+  rectMode(CORNER);
+
+  //drawing the grid 
+  let a = 0;
+  for(let i = 0; i < rows; i ++){
+    for(let j = 0; j < cols; j ++){
+      fill(colours[a]);
+      noStroke();
+      square(grid[a].i * cellSize, grid[a].j * cellSize, cellSize);
+      stroke(0);
+      if(grid[a].walls[0]){
+        line(grid[a].i * cellSize, grid[a].j * cellSize, grid[a].i *cellSize + cellSize, grid[a].j * cellSize); // top edge
+        
+      }
+
+      if(grid[a].walls[1]){
+        line(grid[a].i * cellSize, grid[a].j * cellSize, grid[a].i *cellSize , grid[a].j * cellSize + cellSize); //left edge
+      }
+
+      if(grid[a].walls[2]){
+        line(grid[a].i * cellSize, grid[a].j * cellSize + cellSize, grid[a].i *cellSize + cellSize, grid[a].j * cellSize + cellSize); //bottom edge
+        edges.push([grid[a].i * cellSize, grid[a].j * cellSize + cellSize]);
+      }
+
+      if(grid[a].walls[3]){
+        line(grid[a].i * cellSize + cellSize, grid[a].j * cellSize, grid[a].i *cellSize + cellSize, grid[a].j * cellSize + cellSize); // right edge
+        edges.push(grid[a].i * cellSize + cellSize, grid[a].j * cellSize);
+      }
+      a++;
     }
   }
 
+  //Run Kruskal's Algorithm
+  if(edges.length > 0){
+    let [a,b] = edges.pop;
+    let setA = searchSet(a);
+    let setB = searchSet(b);
+  }
   
+}
+
+function searchSet(edge){
 }

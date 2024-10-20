@@ -67,8 +67,13 @@ function setup() {
   let a = 0;
   for(let i = 0; i < rows; i ++){
     for(let j = 0; j < cols; j ++){
-      edges.push([grid[a].i * cellSize, grid[a].j * cellSize + cellSize]); //bottom edge of every cell
-      edges.push(grid[a].i * cellSize + cellSize, grid[a].j * cellSize); //right edge of every cell 
+      id = i * cols + j;
+      if(j < cols - 1){
+        edges.push([id, id + 1]); //bottom edge of every cell
+      }
+      if( i < rows -1 ){
+        edges.push([id, id + cols]); //right edge of every cell 
+      }
     }
     a++;
   }
@@ -180,12 +185,10 @@ function startGame(){
 
       if(grid[a].walls[2]){
         line(grid[a].i * cellSize, grid[a].j * cellSize + cellSize, grid[a].i *cellSize + cellSize, grid[a].j * cellSize + cellSize); //bottom edge
-        edges.push([grid[a].i * cellSize, grid[a].j * cellSize + cellSize, grid[a].id],"bottom");
       }
 
       if(grid[a].walls[3]){
         line(grid[a].i * cellSize + cellSize, grid[a].j * cellSize, grid[a].i *cellSize + cellSize, grid[a].j * cellSize + cellSize); // right edge
-        edges.push([grid[a].i * cellSize + cellSize, grid[a].j * cellSize, grid[a].id,"right"]);
       }
       a++;
     }
@@ -195,18 +198,24 @@ function startGame(){
   let setA;
   let setB;
   if(edges.length > 0){
-    let [a,b,c,d] = edges.pop();
-    setA = searchSet(a,c);
-    setB = searchSet(b,c);
+    let [a,b] = edges.pop();
+    setA = a;
+    setB = b;
+    console.log(setB);
+
+    if(setA !== setB){
+      unionCells(setA,setB);
+      removeWall(a,b);
+    }
   }
 
-  if(grid[setA].id !== grid[setA + 1].id){
-    unionCells(2,setA);
-  }
+  // if(grid[setA].id !== grid[setA + 1].id){
+  //   unionCells(2,setA);
+  // }
 
-  if(grid[setB].id !== grid[setB + 10].id){
-    unionCells(3,setB);
-  }
+  // if(grid[setB].id !== grid[setB + 10].id){
+  //   unionCells(3,setB);
+  // }
   
 }
 
@@ -215,10 +224,44 @@ function searchSet(edge,targetID){
   return cellSet;
 }
 
-function unionCells(wallNumber,set){
-  grid[set].walls[wallNumber] === false;
+function unionCells(setA,setB){
+  for(let cell of grid){
+    if(cell.id === setB){
+      cell.id = setA;
+      colours[cell.id] = colours[setA];
+    }
+  }
 }
 
+function removeWall(a, b){
+  let x1 = grid[a].i;
+  let y1 = grid[a].j;
+
+  let x2 = grid[b].i;
+  let y2 = grid[b].j;
+
+  if(x1 === x2){
+    if(y1 < y2){
+      grid[a].walls[2] = false;
+      grid[b].walls[0] = false;
+    }
+    else{
+      grid[a].walls[0] = false;
+      grid[b].walls[2] = false;
+    }
+  }
+
+  else if(y1 === y2){
+    if(x1 < x2){
+      grid[a].walls[3] = false;
+      grid[a].walls[1] = false;
+    }
+    else{
+      grid[a].walls[1] = false;
+      gird[a].walls[3] = false;
+    }
+  }
+}
 
 
 

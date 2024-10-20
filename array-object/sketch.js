@@ -180,25 +180,46 @@ function startGame(){
 
       if(grid[a].walls[2]){
         line(grid[a].i * cellSize, grid[a].j * cellSize + cellSize, grid[a].i *cellSize + cellSize, grid[a].j * cellSize + cellSize); //bottom edge
-        edges.push([grid[a].i * cellSize, grid[a].j * cellSize + cellSize]);
+        edges.push([grid[a].i * cellSize, grid[a].j * cellSize + cellSize, grid[a].id],"bottom");
       }
 
       if(grid[a].walls[3]){
         line(grid[a].i * cellSize + cellSize, grid[a].j * cellSize, grid[a].i *cellSize + cellSize, grid[a].j * cellSize + cellSize); // right edge
-        edges.push(grid[a].i * cellSize + cellSize, grid[a].j * cellSize);
+        edges.push([grid[a].i * cellSize + cellSize, grid[a].j * cellSize, grid[a].id,"right"]);
       }
       a++;
     }
   }
 
   //Run Kruskal's Algorithm
+  let setA;
+  let setB;
   if(edges.length > 0){
-    let [a,b] = edges.pop;
-    let setA = searchSet(a);
-    let setB = searchSet(b);
+    let [a,b,c,d] = edges.pop();
+    setA = searchSet(a,c);
+    setB = searchSet(b,c);
+  }
+
+  if(grid[setA].id !== grid[setA + 1].id){
+    unionCells(2,setA);
+  }
+
+  if(grid[setB].id !== grid[setB + 10].id){
+    unionCells(3,setB);
   }
   
 }
 
-function searchSet(edge){
+function searchSet(edge,targetID){
+  let cellSet = grid.findIndex((element) => element.id === targetID );
+  return cellSet;
 }
+
+function unionCells(wallNumber,set){
+  grid[set].walls[wallNumber] === false;
+}
+
+
+
+
+

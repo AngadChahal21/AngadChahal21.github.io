@@ -55,23 +55,25 @@ function setup() {
   rows = floor(height/cellSize);
 
   //assigning and storing unique IDs to each cell
-  for(let i = 0; i < rows; i++){
-    for(let j = 0; j < cols; j++){
-      id = i * cols + j; //unique ID for each cell 
-      grid.push({i:i,   j:j, id:id, walls:[true, true, true, true]});
+  for(let y = 0; y < rows; y++){
+    for(let x = 0; x < cols; x++){
+      id = y * cols + x; //unique ID for each cell 
+      grid.push({x:x,   y:y, set:id, walls:[true, true, true, true]});
       colours[id] = color(random(255), random(255), random(255));
-    }
+    } 
   }
+
+  console.log(grid);
 
   //storing edges in an array
   let a = 0;
-  for(let i = 0; i < rows; i ++){
-    for(let j = 0; j < cols; j ++){
-      id = i * cols + j;
-      if(j < cols - 1){
+  for(let y = 0; y < rows; y ++){
+    for(let x = 0; x < cols; x ++){
+      id = y * cols + x;
+      if(x < cols - 1){
         edges.push([id, id + 1]); //bottom edge of every cell
       }
-      if( i < rows -1 ){
+      if( y < rows -1 ){
         edges.push([id, id + cols]); //right edge of every cell 
       }
     }
@@ -81,10 +83,11 @@ function setup() {
   shuffle(edges, true); // shuffle all edges in  the array 
 }
 
-console.log(grid);
+
 
 
 function draw() {
+  frameRate(30);
   background(220);
   if(gameState === "startScreen"){
     startScreen();
@@ -126,7 +129,7 @@ function startScreen(){
     rect(buttonX, buttonY ,300 ,70 ,50);
     fill(0);
     textSize(15);
-    text("Click to start", buttonX, buttonY);  
+    text("Generate Maze", buttonX, buttonY);  
 
     if(mouseIsPressed){
       gameState = "startGame";
@@ -143,7 +146,7 @@ function startScreen(){
     //button text
     fill("black");
     textSize(15);
-    text("Click to start", buttonX, buttonY);
+    text("Generate Maze", buttonX, buttonY);
   }
 }
 
@@ -170,25 +173,25 @@ function startGame(){
   let a = 0;
   for(let i = 0; i < rows; i ++){
     for(let j = 0; j < cols; j ++){
-      fill(colours[a]);
+      fill(colours[grid[a].set]);
       noStroke();
-      square(grid[a].i * cellSize, grid[a].j * cellSize, cellSize);
+      square(grid[a].x * cellSize, grid[a].y * cellSize, cellSize);
       stroke(0);
       if(grid[a].walls[0]){
-        line(grid[a].i * cellSize, grid[a].j * cellSize, grid[a].i *cellSize + cellSize, grid[a].j * cellSize); // top edge
+        line(grid[a].x * cellSize, grid[a].y * cellSize, grid[a].x *cellSize + cellSize, grid[a].y * cellSize); // top edge
         
       }
 
       if(grid[a].walls[1]){
-        line(grid[a].i * cellSize, grid[a].j * cellSize, grid[a].i *cellSize , grid[a].j * cellSize + cellSize); //left edge
+        line(grid[a].x * cellSize, grid[a].y * cellSize, grid[a].x *cellSize , grid[a].y * cellSize + cellSize); //left edge
       }
 
       if(grid[a].walls[2]){
-        line(grid[a].i * cellSize, grid[a].j * cellSize + cellSize, grid[a].i *cellSize + cellSize, grid[a].j * cellSize + cellSize); //bottom edge
+        line(grid[a].x * cellSize, grid[a].y * cellSize + cellSize, grid[a].x *cellSize + cellSize, grid[a].y * cellSize + cellSize); //bottom edge
       }
 
       if(grid[a].walls[3]){
-        line(grid[a].i * cellSize + cellSize, grid[a].j * cellSize, grid[a].i *cellSize + cellSize, grid[a].j * cellSize + cellSize); // right edge
+        line(grid[a].x * cellSize + cellSize, grid[a].y * cellSize, grid[a].x *cellSize + cellSize, grid[a].y * cellSize + cellSize); // right edge
       }
       a++;
     }
@@ -199,8 +202,8 @@ function startGame(){
   let setB;
   if(edges.length > 0){
     let [a,b] = edges.pop();
-    setA = a;
-    setB = b;
+    setA = searchSet(a);
+    setB = searchSet(b);
     console.log(setB);
 
     if(setA !== setB){
@@ -219,28 +222,27 @@ function startGame(){
   
 }
 
-function searchSet(edge,targetID){
-  let cellSet = grid.findIndex((element) => element.id === targetID );
-  return cellSet;
+function searchSet(index){
+  return grid[index].set;
 }
 
 function unionCells(setA,setB){
   for(let cell of grid){
-    if(cell.id === setB){
-      cell.id = setA;
-      colours[cell.id] = colours[setA];
+    if(cell.set === setB){
+      cell.set = setA;
+      colours[cell.set] = colours[setA];
     }
   }
 }
 
 function removeWall(a, b){
-  let x1 = grid[a].i;
-  let y1 = grid[a].j;
+  let x1 = grid[a].x;
+  let y1 = grid[a].y;
 
-  let x2 = grid[b].i;
-  let y2 = grid[b].j;
+  let x2 = grid[b].x;
+  let y2 = grid[b].y;
 
-  if(x1 === x2){
+  if(x1 === x2){  
     if(y1 < y2){
       grid[a].walls[2] = false;
       grid[b].walls[0] = false;
@@ -254,11 +256,11 @@ function removeWall(a, b){
   else if(y1 === y2){
     if(x1 < x2){
       grid[a].walls[3] = false;
-      grid[a].walls[1] = false;
+      grid[b].walls[1] = false;
     }
     else{
       grid[a].walls[1] = false;
-      gird[a].walls[3] = false;
+      grid[b].walls[3] = false;
     }
   }
 }

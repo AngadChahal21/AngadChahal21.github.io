@@ -29,15 +29,15 @@ Maze solution using Depth First Search algorithm https://medium.com/swlh/solving
 https://vishald.com/blog/kruskals-maze-generation/
 */
 
+let stack = [];
+let visited = [];
 
-// let reached = [];
-// let unreached = [];
 let myFont; //load font
 let img; //background image 
 let gameState = "startScreen"; // state variables
 
 let cols, rows;
-let cellSize = 30;
+let cellSize = 130;
 let id;
 let grid = [];
 let colours = [];
@@ -62,7 +62,6 @@ function setup() {
       colours[id] = color(random(255), random(255), random(255));
     } 
   }
-
   console.log(grid);
 
   //storing edges in an array
@@ -79,8 +78,16 @@ function setup() {
     }
     a++;
   }
-
   shuffle(edges, true); // shuffle all edges in  the array 
+
+  //initializing the visited array  
+  for(let i = 0; i< grid.length; i++){
+    visited[i] = false;
+  }
+
+  //make the starting cell visited
+  visited[0] = true;
+  stack.push(0);
 }
 
 
@@ -98,14 +105,11 @@ function draw() {
   else if(gameState === "endScreen"){
     endScreen();
   }
-  //endScreen();
 }
 
 //endscreen
 function endScreen(){
   background(0);
-  let confetti = [];
-  
 }
 
 //start screen
@@ -207,9 +211,22 @@ function startGame(){
     console.log(setB);
 
     if(setA !== setB){
-      unionCells(setA,setB);
-      removeWall(a,b);
+      unionCells(setA,setB); // merge sets that get connected 
+      removeWall(a,b); //removing walls between a and b
     }
+  }
+
+  //checking whether the maze has been completed or not
+  let check = 0;
+  for(let i = 0; i < grid.length; i++){
+    let idCheck = grid[0].set;
+    if(grid[i].set !== idCheck){
+      check = 1;
+    }
+  }
+  
+  if(check === 0){
+    dfsSolution();
   }
 
   // if(grid[setA].id !== grid[setA + 1].id){
@@ -244,27 +261,73 @@ function removeWall(a, b){
 
   if(x1 === x2){  
     if(y1 < y2){
-      grid[a].walls[2] = false;
-      grid[b].walls[0] = false;
+      grid[a].walls[2] = false; //remove bottom wall
+      grid[b].walls[0] = false; // remove top wall
     }
     else{
-      grid[a].walls[0] = false;
-      grid[b].walls[2] = false;
+      grid[a].walls[0] = false; // remove top wall
+      grid[b].walls[2] = false; // remove bottom wall
     }
   }
 
   else if(y1 === y2){
     if(x1 < x2){
-      grid[a].walls[3] = false;
-      grid[b].walls[1] = false;
+      grid[a].walls[3] = false; // remove right wall
+      grid[b].walls[1] = false; // remove left wall
     }
     else{
-      grid[a].walls[1] = false;
-      grid[b].walls[3] = false;
+      grid[a].walls[1] = false; //remove left wall
+      grid[b].walls[3] = false; //remove right wall
     }
   }
 }
 
+function dfsSolution(){
+  if(stack.length > 0){
+    let current = stack[stack.length - 1];
+    if(current === grid.length - 1){
+      console.log("Maze solved");
+      return stack;
+    }
+     
+    //if there is no wall and the next cell hasn't been visited then push that to stack(path)
+    // Order of precedence: bottom > right > top > left 
+    if(!grid[current].walls[2] && visited[grid[current + 1].set] === false){  // checking bottom wall
+      stack.push(current + 1);
+    }
+    
+    else if(!grid[current].walls[3] && visited[current + cols] === false ){ // checking right wall
+      stack.push(current + cols);
+    }
+ 
+    else if(!grid[current].walls[0] && visited[grid[current - 1].set] === false){ // checking top wall
+      stack.push(current - 1);
+    }
 
+    else if(!grid[current].walls[1] && visited[(grid[current - cols].set)] === false){ //checking left wall
+      stack.push(current - cols);
+    }
+
+    //if all ways are blocking check for open ways regardless of whether they have been visted or not
+    else if(!grid[current].walls[1]){ //checking left wall
+      stack.push(current - cols);
+    }
+
+    else if(!grid[current].walls[0]){ // checking top wall
+      stack.push(current - 1);
+    }
+
+    else if(!grid[current].walls[3]){ // checking right wall
+      stack.push(current + cols);
+    }
+
+    else if(!grid[current].walls[2]){  // checking bottom wall
+      stack.push(current + 1);
+    }
+
+    
+
+  }
+}
 
 

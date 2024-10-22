@@ -3,9 +3,14 @@
 // 21st October, 2024
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+/* - Inplemented, learnt and understood how 'Kruskal's algorithm' and minimum spanning tree works for generating mazes.
+ Moreover, used and understood another algorithm, 'Depth-First Search algorithm' and implemented it for solving the resulting mazes.
+ Lastly, in the process, used some new functions like shuffle or location.reload and used objects within arrays.
+
+*/
 
 //variables for Depth-First Search
+
 let stack = [];
 let visited = [];
 
@@ -73,7 +78,7 @@ function setup() {
 
 
 function draw() {
-  frameRate(30);
+  frameRate(60);
   background(220);
   if(gameState === "startScreen"){
     startScreen();

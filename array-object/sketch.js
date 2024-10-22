@@ -37,7 +37,7 @@ let img; //background image
 let gameState = "startScreen"; // state variables
 
 let cols, rows;
-let cellSize = 130;
+let cellSize = 20;
 let id;
 let grid = [];
 let colours = [];
@@ -62,7 +62,6 @@ function setup() {
       colours[id] = color(random(255), random(255), random(255));
     } 
   }
-  console.log(grid);
 
   //storing edges in an array
   let a = 0;
@@ -208,7 +207,6 @@ function startGame(){
     let [a,b] = edges.pop();
     setA = searchSet(a);
     setB = searchSet(b);
-    console.log(setB);
 
     if(setA !== setB){
       unionCells(setA,setB); // merge sets that get connected 
@@ -227,7 +225,19 @@ function startGame(){
   
   if(check === 0){
     dfsSolution();
+    for(let i = 0; i < stack.length; i++){
+      fill(116,238,21);
+      if(i === 0){
+        fill(255);
+      }
+      if(i === stack.length -1){
+        fill(255,0,0);
+      }
+      //rectMode(CENTER);
+      square(grid[stack[i]].x * cellSize + cellSize/4, grid[stack[i]].y * cellSize + cellSize/4, cellSize/2);
+    }
   }
+
 
   // if(grid[setA].id !== grid[setA + 1].id){
   //   unionCells(2,setA);
@@ -290,40 +300,46 @@ function dfsSolution(){
       return stack;
     }
      
+
+    visited[current] = true;
     //if there is no wall and the next cell hasn't been visited then push that to stack(path)
     // Order of precedence: bottom > right > top > left 
-    if(!grid[current].walls[2] && visited[grid[current + 1].set] === false){  // checking bottom wall
-      stack.push(current + 1);
+    if(!grid[current].walls[2] && current + cols < grid.length &&  !visited[current + cols]){  // checking bottom wall
+      stack.push(current + cols);
     }
     
-    else if(!grid[current].walls[3] && visited[current + cols] === false ){ // checking right wall
-      stack.push(current + cols);
-    }
- 
-    else if(!grid[current].walls[0] && visited[grid[current - 1].set] === false){ // checking top wall
-      stack.push(current - 1);
-    }
-
-    else if(!grid[current].walls[1] && visited[(grid[current - cols].set)] === false){ //checking left wall
-      stack.push(current - cols);
-    }
-
-    //if all ways are blocking check for open ways regardless of whether they have been visted or not
-    else if(!grid[current].walls[1]){ //checking left wall
-      stack.push(current - cols);
-    }
-
-    else if(!grid[current].walls[0]){ // checking top wall
-      stack.push(current - 1);
-    }
-
-    else if(!grid[current].walls[3]){ // checking right wall
-      stack.push(current + cols);
-    }
-
-    else if(!grid[current].walls[2]){  // checking bottom wall
+    else if(!grid[current].walls[3] && (current + 1) % cols !== 0 && !visited[current + 1]){ // checking right wall
       stack.push(current + 1);
     }
+ 
+    else if(!grid[current].walls[0] && current - cols >= 0 && !visited[current - cols]){ // checking top wall
+      stack.push(current - cols);
+    }
+
+    else if(!grid[current].walls[1] && current % cols !== 0 && !visited[current - 1]){ //checking left wall
+      stack.push(current - 1);
+    }
+
+    else{
+      stack.pop();
+    }
+
+    // //if all ways are blocking check for open ways regardless of whether they have been visted or not
+    // else if(!grid[current].walls[1]){ //checking left wall
+    //   stack.push(current - cols);
+    // }
+
+    // else if(!grid[current].walls[0]){ // checking top wall
+    //   stack.push(current - 1);
+    // }
+
+    // else if(!grid[current].walls[3]){ // checking right wall
+    //   stack.push(current + cols);
+    // }
+
+    // else if(!grid[current].walls[2]){  // checking bottom wall
+    //   stack.push(current + 1);
+    // }
 
     
 

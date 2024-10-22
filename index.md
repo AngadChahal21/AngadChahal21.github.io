@@ -14,5 +14,5 @@
 ## Projects 
 
 - [Interactive Scene](interactiveScene)
-- [Arrays and Object Notatiion](array-object)
+- [Arrays and Object Notation Assignment](array-object)
 - [End Screen](end-screen)

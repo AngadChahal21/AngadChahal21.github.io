@@ -1,45 +1,22 @@
-// Project Title
-// Your Name
-// Date
+// Maze Generator and Solver
+// Anagdveer Singh Chahal
+// 21st October, 2024
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-/*Ideas:
-Patterns 
-Generative art 
-A complilations of generative games 
-
-Elements that can be used:
-https://www.reddit.com/r/p5js/comments/1fwsv9t/charged/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-https://www.reddit.com/r/p5js/comments/1frnncu/futuristic_shape_generator/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-https://www.reddit.com/r/p5js/comments/1ed3gci/infinite_donuts_interactive_website/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-(can be used for a maze game)https://www.reddit.com/r/p5js/comments/1eazmb9/amazing/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-(collision library for p5 js) https://github.com/bmoren/p5.collide2D.git
-https://www.reddit.com/r/p5js/comments/1e2q5i7/brightness_based_ascii_renderer_including_edge/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-https://www.reddit.com/r/p5js/comments/1djme24/ive_been_addicted_to_playing_bitburner_lately/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-*/
-
-
-/*
-Maze generation using Prim's  algorithm https://www.youtube.com/watch?v=BxabnKrOjT0      https://github.com/ian-howell/Mazes
-Maze solution using Depth First Search algorithm https://medium.com/swlh/solving-mazes-with-depth-first-search-e315771317ae
-
-
-https://vishald.com/blog/kruskals-maze-generation/
-*/
-
+//variables for Depth-First Search
 let stack = [];
 let visited = [];
 
 let myFont; //load font
 let img; //background image 
-let gameState = "startScreen"; // state variables
+let gameState = "startScreen"; // state variable
 
-let cols, rows;
-let cellSize = 20;
+let cols, rows; 
+const CELL_SIZE = 30;
 let id;
-let grid = [];
+let grid = []; //storing details for every cell in the maze 
 let colours = [];
 let edges = [];
 
@@ -50,16 +27,19 @@ function preload(){
 }
 
 function setup() {
+
+  
   createCanvas(windowWidth, windowHeight);
-  cols = floor(height/cellSize);
-  rows = floor(height/cellSize);
+  cols = floor(height/CELL_SIZE);
+  rows = floor(height/CELL_SIZE);
+  
 
   //assigning and storing unique IDs to each cell
   for(let y = 0; y < rows; y++){
     for(let x = 0; x < cols; x++){
       id = y * cols + x; //unique ID for each cell 
       grid.push({x:x,   y:y, set:id, walls:[true, true, true, true]});
-      colours[id] = color(random(255), random(255), random(255));
+      colours[id] = color(random(255), random(255), random(255)); //assigned random color to each cell
     } 
   }
 
@@ -100,21 +80,14 @@ function draw() {
   }
   else if(gameState === "startGame"){
     startGame();
-  }
-  else if(gameState === "endScreen"){
-    endScreen();
-  }
-}
 
-//endscreen
-function endScreen(){
-  background(0);
+  }
 }
 
 //start screen
 function startScreen(){
-  let buttonX = width/2;
-  let buttonY = 3/5 * height;
+  let buttonX = width/2; //x-coordinate of button
+  let buttonY = 3/5 * height; //y-coordinate of button
   background(img);
 
   let fontSize = map(width, 0, 1000, 10, 65); // calculating responsive font size
@@ -144,7 +117,7 @@ function startScreen(){
     //button
     fill("yellow");
     rectMode(CENTER);
-    let rectangle = rect(buttonX,buttonY ,300 ,70 ,50); //draw button 
+    rect(buttonX,buttonY ,300 ,70 ,50); //draw button 
     
     //button text
     fill("black");
@@ -154,52 +127,73 @@ function startScreen(){
 }
 
 function startGame(){
-  background(220);
-  // for(let i = 50; i < width; i += 100 ){
-  //   for(let j = 50; j < height; j += 100){
-  //     fill("green");
-  //     noStroke();
-  //     rect(i,j,50,50);
-  //   }
-  // }
+  background(0);
+  
+  rectMode(CENTER);
+  let mazeWidth = cols * CELL_SIZE;
+  
+  //button hovered
+  if(mouseX < mazeWidth + (windowWidth - mazeWidth)/2 + 75 && mouseX > mazeWidth + (windowWidth - mazeWidth)/2 - 75 && mouseY > 1/3 * height - 25 && mouseY < 1/3 * height + 25){
+    stroke(255);
+    fill(86, 176, 16);
+    rect(mazeWidth + (windowWidth - mazeWidth)/2, 1/3 * height,150,50, 10 );
+    fill(0);
+    textSize(8);
+    text("Back to Menu", mazeWidth + (windowWidth - mazeWidth)/2, 1/3 * height);  
 
-  // for(let i = width/21 ; i < width - width/21; i+= width/20 * 2){
-  //   for(let j = height/21 * 2 ; j < height - height/21; j+= width/20 * 2){
-  //     fill("green");
-  //     noStroke();
-  //     rect(i,j, width/20, width/20);
-  //   }
-  // }
+    if(mouseIsPressed){
+      location.reload(); //reset all values and start all over again 
+    }
+    mouseIsPressed = false;
+  }
+
+  //button normal
+  else{
+    //button
+    stroke(255);
+    fill(116,238,21);
+    rect(mazeWidth + (windowWidth - mazeWidth)/2, 1/3 * height,150,50, 10 );
+    
+    //button text
+    fill(0);
+    textSize(8);
+    text("Back to Menu", mazeWidth + (windowWidth - mazeWidth)/2, 1/3 * height );  
+  }
+  fill(255);
+  textSize(12);
+  text("The maze can be \n solved in \n" + stack.length + " steps", mazeWidth + (windowWidth - mazeWidth)/2, 2/3 * height );
+
   rectMode(CORNER);
-
+  
   //drawing the grid 
   let a = 0;
   for(let i = 0; i < rows; i ++){
     for(let j = 0; j < cols; j ++){
       fill(colours[grid[a].set]);
       noStroke();
-      square(grid[a].x * cellSize, grid[a].y * cellSize, cellSize);
+      square(grid[a].x * CELL_SIZE, grid[a].y * CELL_SIZE, CELL_SIZE);
       stroke(0);
       if(grid[a].walls[0]){
-        line(grid[a].x * cellSize, grid[a].y * cellSize, grid[a].x *cellSize + cellSize, grid[a].y * cellSize); // top edge
+        line(grid[a].x * CELL_SIZE, grid[a].y * CELL_SIZE, grid[a].x *CELL_SIZE + CELL_SIZE, grid[a].y * CELL_SIZE); // top edge
         
       }
 
       if(grid[a].walls[1]){
-        line(grid[a].x * cellSize, grid[a].y * cellSize, grid[a].x *cellSize , grid[a].y * cellSize + cellSize); //left edge
+        line(grid[a].x * CELL_SIZE, grid[a].y * CELL_SIZE, grid[a].x *CELL_SIZE , grid[a].y * CELL_SIZE + CELL_SIZE); //left edge
       }
 
       if(grid[a].walls[2]){
-        line(grid[a].x * cellSize, grid[a].y * cellSize + cellSize, grid[a].x *cellSize + cellSize, grid[a].y * cellSize + cellSize); //bottom edge
+        line(grid[a].x * CELL_SIZE, grid[a].y * CELL_SIZE + CELL_SIZE, grid[a].x *CELL_SIZE + CELL_SIZE, grid[a].y * CELL_SIZE + CELL_SIZE); //bottom edge
       }
 
       if(grid[a].walls[3]){
-        line(grid[a].x * cellSize + cellSize, grid[a].y * cellSize, grid[a].x *cellSize + cellSize, grid[a].y * cellSize + cellSize); // right edge
+        line(grid[a].x * CELL_SIZE + CELL_SIZE, grid[a].y * CELL_SIZE, grid[a].x *CELL_SIZE + CELL_SIZE, grid[a].y * CELL_SIZE + CELL_SIZE); // right edge
       }
       a++;
     }
   }
 
+  
   //Run Kruskal's Algorithm
   let setA;
   let setB;
@@ -223,6 +217,7 @@ function startGame(){
     }
   }
   
+  //if maze completed, implement DFS algorithm to solve it
   if(check === 0){
     dfsSolution();
     for(let i = 0; i < stack.length; i++){
@@ -234,25 +229,16 @@ function startGame(){
         fill(255,0,0);
       }
       //rectMode(CENTER);
-      square(grid[stack[i]].x * cellSize + cellSize/4, grid[stack[i]].y * cellSize + cellSize/4, cellSize/2);
+      square(grid[stack[i]].x * CELL_SIZE + CELL_SIZE/4, grid[stack[i]].y * CELL_SIZE + CELL_SIZE/4, CELL_SIZE/2);
     }
   }
-
-
-  // if(grid[setA].id !== grid[setA + 1].id){
-  //   unionCells(2,setA);
-  // }
-
-  // if(grid[setB].id !== grid[setB + 10].id){
-  //   unionCells(3,setB);
-  // }
-  
 }
 
 function searchSet(index){
   return grid[index].set;
 }
 
+//merge IDs and colours of connected cells
 function unionCells(setA,setB){
   for(let cell of grid){
     if(cell.set === setB){
@@ -262,6 +248,7 @@ function unionCells(setA,setB){
   }
 }
 
+//remove walls between a and b
 function removeWall(a, b){
   let x1 = grid[a].x;
   let y1 = grid[a].y;
@@ -292,14 +279,13 @@ function removeWall(a, b){
   }
 }
 
+//solving maze
 function dfsSolution(){
   if(stack.length > 0){
     let current = stack[stack.length - 1];
     if(current === grid.length - 1){
-      console.log("Maze solved");
       return stack;
     }
-     
 
     visited[current] = true;
     //if there is no wall and the next cell hasn't been visited then push that to stack(path)
@@ -320,30 +306,8 @@ function dfsSolution(){
       stack.push(current - 1);
     }
 
-    else{
+    else{ // if there is no way to move ahead/ approached deadend then pop the stack until a new path emerges
       stack.pop();
     }
-
-    // //if all ways are blocking check for open ways regardless of whether they have been visted or not
-    // else if(!grid[current].walls[1]){ //checking left wall
-    //   stack.push(current - cols);
-    // }
-
-    // else if(!grid[current].walls[0]){ // checking top wall
-    //   stack.push(current - 1);
-    // }
-
-    // else if(!grid[current].walls[3]){ // checking right wall
-    //   stack.push(current + cols);
-    // }
-
-    // else if(!grid[current].walls[2]){  // checking bottom wall
-    //   stack.push(current + 1);
-    // }
-
-    
-
   }
 }
-
-

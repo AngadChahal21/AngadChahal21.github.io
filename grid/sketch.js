@@ -20,10 +20,43 @@ function setup() {
   grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
 }
 
+function windowResized(){
+  if(windowWidth< windowHeight){
+    resizeCanvas(windowWidth, windowWidth);
+  }
+  else{
+    resizeCanvas(windowHeight, windowHeight);
+  }
+  cellSize = height/GRID_SIZE;
+}
+
 function draw() {
-  frameRate(15);
+  frameRate(60);
   background(220);
   displayGrid();
+}
+
+function mousePressed(){
+  let x = Math.floor(mouseX/cellSize);
+  let y = Math.floor(mouseY/cellSize);
+
+  toggleCell(x, y);
+  toggleCell(x, y+1);
+  toggleCell(x, y-1);
+  toggleCell(x+1, y);
+  toggleCell(x-1, y);
+}
+
+function toggleCell(x, y){
+
+  if(x >= 0 && x < GRID_SIZE && y>=0 && y < GRID_SIZE){
+    if(grid[y][x] === 0) {
+      grid[y][x] = 1;
+    }
+    else{
+      grid[y][x] = 0;
+    }
+}
 }
 
 function keyPressed(){
@@ -48,9 +81,9 @@ function displayGrid(){
 
       square(x * cellSize,y * cellSize, cellSize);
 
-      if(mouseIsPressed && mouseX < x * cellSize + cellSize && mouseX > x * cellSize && mouseY < y * cellSize + cellSize && mouseY > y * cellSize){
-        grid[y][x] =  Math.abs(grid[y][x] - 1);
-      }
+      // if(mouseIsPressed && mouseX < x * cellSize + cellSize && mouseX > x * cellSize && mouseY < y * cellSize + cellSize && mouseY > y * cellSize){
+      //   grid[y][x] =  Math.abs(grid[y][x] - 1);
+      // }
     }
   }
 }

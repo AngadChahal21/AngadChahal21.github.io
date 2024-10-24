@@ -7,6 +7,7 @@
 let grid;            
 let cellSize;
 const GRID_SIZE = 10;
+let shouldToggleNeighbours = false;
 
 function setup() {
 
@@ -41,10 +42,14 @@ function mousePressed(){
   let y = Math.floor(mouseY/cellSize);
 
   toggleCell(x, y);
-  toggleCell(x, y+1);
-  toggleCell(x, y-1);
-  toggleCell(x+1, y);
-  toggleCell(x-1, y);
+
+  // if(shouldToggleNeighbours){
+  //   toggleCell(x, y+1);
+  //   toggleCell(x, y-1);
+  //   toggleCell(x+1, y);
+  //   toggleCell(x-1, y);
+
+  // }
 }
 
 function toggleCell(x, y){
@@ -67,7 +72,56 @@ function keyPressed(){
   if(key === "e"){
     grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
   }
+
+  if(key === 'n'){
+    shouldToggleNeighbours = !shouldToggleNeighbours;
+  }
+  if(key === " "){
+    grid = updateGrid();
+  }
 }
+
+function updateGrid(){
+  //make another array to hold the next rurn
+  let nextTurn =  generateEmptyGrid(GRID_SIZE, GRID_SIZE);
+
+  //look at every cell
+  for(let y = 0; y < GRID_SIZE; y++){
+    for(let x = 0; x < GRID_SIZE; x++){
+      let neighbours = 0;
+
+      //look at every nieghbour around it
+      for(let i = -1;  i <= 1; i++){
+        for(let j = -1; j <= 1; j++){
+          //don't fall off the edege
+          if(x+j >= 0 && x+j < GRID_SIZE && y+i >= 0 && y+i < GRID_SIZE){
+            neighbours += grid[y+i][x+j];
+          }
+        }
+      }
+
+      //don't count youself as a neighbour
+      neighbours -= gird[y][x];
+
+      //apply the rules 
+      if(grid[y][x] === 1 ){ ///alive
+        if(neighbours === 2 || neighbours === 3){
+          nextTurn[y][x] = 1;
+        }
+        else{
+            nextTurn[y][x] = 0;
+          }
+        }
+
+      if(gird[y][x] === 0){
+        if(neighbours === 3 ){
+
+        }
+      }
+      }
+    }
+  }
+
 
 function displayGrid(){
   for(let y = 0; y < GRID_SIZE; y++){
@@ -80,10 +134,6 @@ function displayGrid(){
       }
 
       square(x * cellSize,y * cellSize, cellSize);
-
-      // if(mouseIsPressed && mouseX < x * cellSize + cellSize && mouseX > x * cellSize && mouseY < y * cellSize + cellSize && mouseY > y * cellSize){
-      //   grid[y][x] =  Math.abs(grid[y][x] - 1);
-      // }
     }
   }
 }

@@ -56,7 +56,7 @@ function toggleCell(x, y){
     else{
       grid[y][x] = 0;
     }
-}
+  }
 }
 
 function keyPressed(){

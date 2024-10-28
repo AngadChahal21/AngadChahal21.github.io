@@ -11,6 +11,7 @@
 - [Bubble Demo](bubble)
 - [Translate/Rotate](translate)
 - [Grid Demo](grid)
+- [Rectangular Grid](rectangle-grid)
 
 ## Projects 
 

@@ -17,4 +17,4 @@
 
 - [Interactive Scene](interactiveScene)
 - [Arrays and Object Notation Assignment](array-object)
-- [End Screen](end-screen)
+- [Grid-based Game](grid-based-game)

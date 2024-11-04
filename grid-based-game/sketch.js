@@ -11,6 +11,24 @@ let size = [];
 let cols, rows;
 let scale = 0.2;
 
+//mouse animation 2
+const CELL_SIZE = 40;
+const COLOR_R = 79;
+const COLOR_G = 38;
+const COLOR_B = 233;
+const STARTING_ALPHA = 255;
+const BACKGROUND_COLOR = 31;
+const PROB_OF_NEIGHBOUR = 0.5;
+const AMT_FADE_PER_FRAME = 5;
+const STROKE_WEIGHT = 1;
+
+let colorWithAlpha;
+let numRows;
+let numCols;
+let currentRow = -1;
+let currentCol = -1;
+let allNeighbours = [];
+
 
 let gameState = "endScreen";
 
@@ -23,6 +41,13 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   cols = width/spacing;
   rows = height/spacing;
+
+  colorWithAlpha = color(COLOR_R, COLOR_G, COLOR_B, STARTING_ALPHA);
+  stroke(colorWithAlpha);
+  strokeWeight(STROKE_WEIGHT);
+  numRows = Math.ceil(windowHeight/ CELL_SIZE);
+  numCols = Math.ceil(windowWidth/ CELL_SIZE);
+
 
 }
 
@@ -99,7 +124,18 @@ function startScreen(){
 function endScreen(){
   let buttonX = width/2; //x-coordinate of button
   let buttonY = 3/5 * height; //y-coordinate of button
-  background(150);
+
+  background(31);
+  let row = floor(mouseY/CELL_SIZE);
+  let col = floor(mouseX/CELL_SIZE);
+
+  if(row !== currentRow || col !== currentCol){
+    currentRow = row;
+    currentCol = col;
+
+    allNeighbours.push(getRandomNeighours(row, col));
+  }
+  
 
   let fontSize = map(width, 0, 1000, 10, 65); // calculating responsive font size
 
@@ -134,5 +170,15 @@ function endScreen(){
     fill(255);
     textSize(15);
     text("Back to Home", buttonX, buttonY);
+  }
+}
+
+function getRandomNeighours(row, col){
+  let neighbours = [];
+  for(let dRow = -1; dRow <= 1; dRow++){
+    for(let dCol = -1; dCol <= 1; dCol++){
+      let neighbourRow = row + dRow;
+      let neightbourCol = col + dCol;
+    }
   }
 }

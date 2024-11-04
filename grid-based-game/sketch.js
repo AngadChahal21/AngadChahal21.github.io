@@ -5,20 +5,24 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-//mouse animation
+//mouse animation(circle)
+////////////////
 let spacing = 20;
 let size = [];
 let cols, rows;
 let scale = 0.2;
+////////////////
 
-//mouse animation 2
+//mouse animation 2(trailing effect)
+///////////////////////////////
 const CELL_SIZE = 40;
+
 const COLOR_R = 79;
 const COLOR_G = 38;
 const COLOR_B = 233;
 const STARTING_ALPHA = 255;
-const BACKGROUND_COLOR = 31;
-const PROB_OF_NEIGHBOUR = 0.5;
+
+const PROB_OF_NEIGHBOUR = 50;
 const AMT_FADE_PER_FRAME = 5;
 const STROKE_WEIGHT = 1;
 
@@ -28,7 +32,7 @@ let numCols;
 let currentRow = -1;
 let currentCol = -1;
 let allNeighbours = [];
-
+///////////////////////////////
 
 let gameState = "endScreen";
 
@@ -41,7 +45,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   cols = width/spacing;
   rows = height/spacing;
-
+  
   colorWithAlpha = color(COLOR_R, COLOR_G, COLOR_B, STARTING_ALPHA);
   stroke(colorWithAlpha);
   strokeWeight(STROKE_WEIGHT);
@@ -74,7 +78,7 @@ function startScreen(){
   for(let y = 0; y < rows; y++){
     size[y] = [];
     for(let x= 0; x < cols; x++){
-      size[y][x] = (dist(mouseX,mouseY, spacing/2 + x * spacing, spacing/2 + y * spacing)) * scale;
+      size[y][x] = dist(mouseX,mouseY, spacing/2 + x * spacing, spacing/2 + y * spacing) * scale;
     }
   }
   for(let y = 0; y < rows; y++){
@@ -126,16 +130,40 @@ function endScreen(){
   let buttonY = 3/5 * height; //y-coordinate of button
 
   background(31);
-  let row = floor(mouseY/CELL_SIZE);
+  // finding indices 
+  let row = floor(mouseY/CELL_SIZE); 
   let col = floor(mouseX/CELL_SIZE);
 
+  //updating current grid locations of mouse 
   if(row !== currentRow || col !== currentCol){
     currentRow = row;
     currentCol = col;
 
     allNeighbours.push(getRandomNeighours(row, col));
   }
-  
+
+  //co-ordinates of the square
+  let x = col * CELL_SIZE; 
+  let y = row * CELL_SIZE;
+
+  noFill();
+  stroke(colorWithAlpha);
+  rect(x, y, CELL_SIZE, CELL_SIZE);
+
+  //displaying neighbour grid cells
+  for(let neighbour of allNeighbours){
+    let neighbourX = neighbour.col * CELL_SIZE;
+    let neighbourY = neighbour.row * CELL_SIZE;
+
+    console.log(neighbour.col);
+    
+
+    neighbour.opacity = max(0, neighbour.opacity - AMT_FADE_PER_FRAME);
+    stroke(COLOR_R, COLOR_B, COLOR_G, neighbour.opacity);
+    rect(neighbourX, neighbourY, CELL_SIZE, CELL_SIZE);
+  }
+
+  allNeighbours = allNeighbours.filter((neighbour) => neighbour.opacity > 0); //removing neighbours with 0 opacity
 
   let fontSize = map(width, 0, 1000, 10, 65); // calculating responsive font size
 
@@ -178,7 +206,24 @@ function getRandomNeighours(row, col){
   for(let dRow = -1; dRow <= 1; dRow++){
     for(let dCol = -1; dCol <= 1; dCol++){
       let neighbourRow = row + dRow;
-      let neightbourCol = col + dCol;
+      let neighbourCol = col + dCol;
+
+      let isCurrent  = (dRow === 0 && dCol === 0); // boolean variable to check whether the neighbour is the current cell
+
+      //boolean variable to check bounds of neighbour cells
+      let withinBounds = 
+      neighbourRow >= 0 &&
+      neighbourRow < numRows &&
+      neighbourCol >= 0 &&
+      neighbourCol < numCols;
+
+      if(!isCurrent && withinBounds && random(0,100) < PROB_OF_NEIGHBOUR){
+        neighbours.push({row:neighbourRow, col: neighbourCol, opacity: STARTING_ALPHA});
+      }
     }
+
   }
+  console.log(neighbours);
+  return neighbours;
+
 }

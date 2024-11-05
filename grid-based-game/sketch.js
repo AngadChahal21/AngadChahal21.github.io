@@ -34,6 +34,15 @@ let currentCol = -1;
 let allNeighbours = [];
 ///////////////////////////////
 
+//main grid
+////////////////////////////
+let mainRows;
+let mainCols;
+let mainCellSize;
+let numSides;
+
+
+
 let gameState = "endScreen";
 
 function preload(){
@@ -52,6 +61,10 @@ function setup() {
   numRows = Math.ceil(windowHeight/ CELL_SIZE);
   numCols = Math.ceil(windowWidth/ CELL_SIZE);
 
+  //main grid 
+  mainCellSize = 50;
+  mainRows = height/mainCellSize;
+  mainCols = width/mainCellSize;
 
 }
 
@@ -59,6 +72,10 @@ function draw() {
   background(220);
   if(gameState === "startScreen"){
     startScreen();
+  }
+
+  if(gameState === "startGame"){
+    startGame();
   }
 
   if(gameState === "endScreen"){
@@ -74,6 +91,8 @@ function startScreen(){
 
   let fontSize = map(width, 0, 1000, 10, 65); // calculating responsive font size
 
+  //the mouse animation
+  ////////////////////////////
   rectMode(CENTER);
   for(let y = 0; y < rows; y++){
     size[y] = [];
@@ -88,6 +107,7 @@ function startScreen(){
       rect(spacing/2 + x * spacing, spacing/2 + y * spacing, size[y][x], size[y][x] );
     }
   }
+  ////////////////////////////
 
   //Title text
   fill(255);
@@ -105,7 +125,7 @@ function startScreen(){
     text("Start", buttonX, buttonY);  
 
     if(mouseIsPressed){
-      // gameState = "startGame";
+      gameState = "startGame";
     }
   }
 
@@ -123,6 +143,25 @@ function startScreen(){
   }
 
   
+}
+
+function startGame(){
+  strokeJoin(ROUND);
+  rectMode(CENTER);
+
+  let c = 1;
+  for(let y = 0; y < mainRows; y++){
+    for(let x = 0; x < mainCols; x+=1.5){
+      if(c%2 !== 0){
+        drawHexagon(x * mainCellSize, y * mainCellSize, mainCellSize/2);
+      }
+      if(c%2 === 0){
+        drawHexagon(x * mainCellSize, y * mainCellSize, mainCellSize/2);
+      }
+    }
+    c++;
+  }
+
 }
 
 function endScreen(){
@@ -226,4 +265,12 @@ function getRandomNeighours(row, col){
   console.log(neighbours);
   return neighbours;
 
+}
+
+function drawHexagon(cX, cY, r){
+  beginShape();
+  for(let a = 0; a < TAU; a+=TAU/6){
+    vertex(cX + r * cos(a), cY + r * sin(a));
+  }
+  endShape(CLOSE);
 }

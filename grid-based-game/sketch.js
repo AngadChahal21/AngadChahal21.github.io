@@ -39,7 +39,7 @@ let allNeighbours = [];
 let mainRows;
 let mainCols;
 let mainCellSize;
-let numSides;
+let numSides = 6;
 
 
 
@@ -148,12 +148,11 @@ function startScreen(){
 function startGame(){
   strokeJoin(ROUND);
   rectMode(CENTER);
-
   let c = 1;
   for(let y = 0; y < mainRows; y++){
     for(let x = 0; x < mainCols; x+=1.5){
       if(c%2 !== 0){
-        drawHexagon(x * mainCellSize, y * mainCellSize, mainCellSize/2);
+        drawHexagon(x * mainCellSize , y * mainCellSize , mainCellSize/2);
       }
       if(c%2 === 0){
         drawHexagon(x * mainCellSize, y * mainCellSize, mainCellSize/2);
@@ -269,7 +268,7 @@ function getRandomNeighours(row, col){
 
 function drawHexagon(cX, cY, r){
   beginShape();
-  for(let a = 0; a < TAU; a+=TAU/6){
+  for(let a = 0; a < TAU; a+=TAU/numSides){
     vertex(cX + r * cos(a), cY + r * sin(a));
   }
   endShape(CLOSE);

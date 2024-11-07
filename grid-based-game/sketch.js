@@ -151,12 +151,7 @@ function startGame(){
   let c = 1;
   for(let y = 0; y < mainRows; y++){
     for(let x = 0; x < mainCols; x+=1.5){
-      if(c%2 !== 0){
-        drawHexagon(x * mainCellSize , y * mainCellSize , mainCellSize/2);
-      }
-      if(c%2 === 0){
-        drawHexagon(x * mainCellSize, y * mainCellSize, mainCellSize/2);
-      }
+      drawHexagon(x * mainCellSize + 0.75 * mainCellSize, y * mainCellSize , mainCellSize);
     }
     c++;
   }
@@ -266,10 +261,19 @@ function getRandomNeighours(row, col){
 
 }
 
-function drawHexagon(cX, cY, r){
+function drawHexagon(x, y, d){
   beginShape();
-  for(let a = 0; a < TAU; a+=TAU/numSides){
-    vertex(cX + r * cos(a), cY + r * sin(a));
-  }
+  vertex(x - 0.5 * d,y); // extreme left 
+  
+  //top 
+  vertex(x - 0.25 * d, y - 0.5 * (Math.sqrt(3) * 0.5 * d)); // top left 
+  vertex(x + 0.25 * d, y - 0.5 * (Math.sqrt(3) * 0.5 * d)); // top right
+  
+  vertex(x + 0.5 * d,y ); // extreme right 
+  
+  //bottom
+  vertex(x + 0.25 * d, y + 0.5 * (Math.sqrt(3) * 0.5 * d)); // bottom right
+  vertex(x - 0.25 * d, y + 0.5 * (Math.sqrt(3) * 0.5 * d));// bottom left 
+  
   endShape(CLOSE);
 }

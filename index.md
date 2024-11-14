@@ -12,6 +12,7 @@
 - [Translate/Rotate](translate)
 - [Grid Demo](grid)
 - [Rectangular Grid](rectangle-grid)
+- [Walker OOP demo](walker-oop)
 
 ## Projects 
 

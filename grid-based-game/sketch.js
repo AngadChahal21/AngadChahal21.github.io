@@ -5,6 +5,9 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
+let myFont;
+let pause;
+
 //mouse animation(circle)
 ////////////////
 let spacing = 20;
@@ -17,13 +20,15 @@ let scale = 0.2;
 ///////////////////////////////
 const CELL_SIZE = 40;
 
+//the purple-like color
 const COLOR_R = 79;
 const COLOR_G = 38;
 const COLOR_B = 233;
+
 const STARTING_ALPHA = 255;
 
-const PROB_OF_NEIGHBOUR = 50;
-const AMT_FADE_PER_FRAME = 5;
+const PROB_OF_NEIGHBOUR = 50; //50-50 chance
+const AMT_FADE_PER_FRAME = 5; 
 const STROKE_WEIGHT = 1;
 
 let colorWithAlpha;
@@ -36,17 +41,21 @@ let allNeighbours = [];
 
 //main grid
 ////////////////////////////
-let mainRows;
-let mainCols;
-let mainCellSize;
-let numSides = 6;
+let mainRows;             //
+let mainCols;             //
+let mainCellSize;         //
+let numSides = 6;         //
+////////////////////////////
 
+//game logic
+let paused = false;
 
 
 let gameState = "endScreen";
 
 function preload(){
   myFont = loadFont('PressStart2P-Regular.ttf');
+  pause = loadImage('./pictures/pausedButton.png');
 }
 
 
@@ -62,8 +71,8 @@ function setup() {
   numCols = Math.ceil(windowWidth/ CELL_SIZE);
 
   //main grid 
-  mainCellSize = 50;
-  mainRows = height/mainCellSize;
+  mainCellSize = 100;
+  mainRows = height/(mainCellSize/2);
   mainCols = width/mainCellSize;
 
 }
@@ -84,6 +93,7 @@ function draw() {
 
 }
 
+//START SCREEN
 function startScreen(){
   let buttonX = width/2; //x-coordinate of button
   let buttonY = 3/5 * height; //y-coordinate of button
@@ -105,6 +115,7 @@ function startScreen(){
       fill(30);
       noStroke();
       rect(spacing/2 + x * spacing, spacing/2 + y * spacing, size[y][x], size[y][x] );
+
     }
   }
   ////////////////////////////
@@ -145,19 +156,52 @@ function startScreen(){
   
 }
 
+
+//START GAME
 function startGame(){
+  
   strokeJoin(ROUND);
   rectMode(CENTER);
   let c = 1;
-  for(let y = 0; y < mainRows; y++){
+  let height = sqrt(3) * 0.5 * mainCellSize;
+  
+  for(let y = 0; y < mainRows; y+=0.5){
     for(let x = 0; x < mainCols; x+=1.5){
-      drawHexagon(x * mainCellSize + 0.75 * mainCellSize, y * mainCellSize , mainCellSize);
+      if(c% 2 === 0){
+        drawHexagon(x * mainCellSize + 0.75 * mainCellSize, y * height , mainCellSize);
+      }
+      else{
+        drawHexagon(x * mainCellSize , y * height , mainCellSize);
+      }
     }
     c++;
+    
   }
 
+  if(!paused){
+    updateGame();
+  }
+
+  if(paused){
+    rectMode(CORNER);
+    fill(100,150);
+    noStroke();
+    rect(0,0,windowWidth , windowHeight);
+    imageMode(CENTER);
+    image(pause, windowWidth/2, windowHeight/2, 120, 120);
+  }
 }
 
+function keyPressed(){
+  if(key === 'P' || key === 'p'){
+    paused = !paused; 
+  }
+}
+
+function updateGame(){
+}
+
+//END SCREEN
 function endScreen(){
   let buttonX = width/2; //x-coordinate of button
   let buttonY = 3/5 * height; //y-coordinate of button
@@ -172,10 +216,14 @@ function endScreen(){
     currentRow = row;
     currentCol = col;
 
-    allNeighbours.push(getRandomNeighours(row, col));
+    let newNeighbours = getRandomNeighours(row, col);
+    console.log(newNeighbours);
+    for (let neighbour of newNeighbours) {
+      allNeighbours.push(neighbour);
+    }    
   }
 
-  //co-ordinates of the square
+  //co-ordinates of the square the mouse is hovering on
   let x = col * CELL_SIZE; 
   let y = row * CELL_SIZE;
 
@@ -185,10 +233,11 @@ function endScreen(){
 
   //displaying neighbour grid cells
   for(let neighbour of allNeighbours){
+    console.log(neighbour.col);
     let neighbourX = neighbour.col * CELL_SIZE;
     let neighbourY = neighbour.row * CELL_SIZE;
+    console.log(neighbour.opacity);
 
-    console.log(neighbour.col);
     
 
     neighbour.opacity = max(0, neighbour.opacity - AMT_FADE_PER_FRAME);
@@ -234,14 +283,15 @@ function endScreen(){
   }
 }
 
+//STORE A RANDOM NUMBER OF NEIGHBOURS IN AN ARRAY
 function getRandomNeighours(row, col){
   let neighbours = [];
-  for(let dRow = -1; dRow <= 1; dRow++){
-    for(let dCol = -1; dCol <= 1; dCol++){
+  for(let dRow = -1; dRow <= 1; dRow++){ // top and bottom neighbours 
+    for(let dCol = -1; dCol <= 1; dCol++){ //left and right neighbours 
       let neighbourRow = row + dRow;
       let neighbourCol = col + dCol;
 
-      let isCurrent  = (dRow === 0 && dCol === 0); // boolean variable to check whether the neighbour is the current cell
+      let isCurrent  = (dRow === 0 && dCol === 0); // boolean variable to check whether the neighbour is the current cell itself 
 
       //boolean variable to check bounds of neighbour cells
       let withinBounds = 
@@ -251,17 +301,24 @@ function getRandomNeighours(row, col){
       neighbourCol < numCols;
 
       if(!isCurrent && withinBounds && random(0,100) < PROB_OF_NEIGHBOUR){
-        neighbours.push({row:neighbourRow, col: neighbourCol, opacity: STARTING_ALPHA});
+        neighbours.push({row:neighbourRow, col: neighbourCol, opacity: 255});
       }
+
+      console.log(neighbourRow);
+      console.log(neighbourCol);
     }
 
   }
+  
   console.log(neighbours);
   return neighbours;
 
 }
 
+//DRAW HE HEX TILES
 function drawHexagon(x, y, d){
+  stroke(255);
+  fill(0);
   beginShape();
   vertex(x - 0.5 * d,y); // extreme left 
   

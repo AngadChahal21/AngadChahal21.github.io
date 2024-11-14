@@ -49,9 +49,13 @@ let numSides = 6;         //
 
 //game logic
 let paused = false;
+let character;
+let bots = [];
+let indices = [];
 
 
-let gameState = "endScreen";
+
+let gameState = "startScreen";
 
 function preload(){
   myFont = loadFont('PressStart2P-Regular.ttf');
@@ -72,10 +76,13 @@ function setup() {
 
   //main grid 
   mainCellSize = 100;
-  mainRows = height/(mainCellSize/2);
-  mainCols = width/mainCellSize;
+  mainRows = windowHeight/(mainCellSize/2);
+  mainCols = windowWidth/mainCellSize;
 
 }
+
+console.log(mainRows);
+console.log(mainCols);
 
 function draw() {
   background(220);
@@ -160,18 +167,35 @@ function startScreen(){
 //START GAME
 function startGame(){
   
+  console.log(mainRows);
+  console.log(mainCols);
+
+  background(0);
   strokeJoin(ROUND);
   rectMode(CENTER);
   let c = 1;
   let height = sqrt(3) * 0.5 * mainCellSize;
-  
+  let radius = mainCellSize/2;
+  let centerX;
+  let centerY;
+
+  let coordX;
+  let coordY;
   for(let y = 0; y < mainRows; y+=0.5){
     for(let x = 0; x < mainCols; x+=1.5){
       if(c% 2 === 0){
-        drawHexagon(x * mainCellSize + 0.75 * mainCellSize, y * height , mainCellSize);
+        centerX = x * mainCellSize + 0.75 * mainCellSize;
+        centerY = y * height;
+        if(centerX - radius > 0 && centerX + radius < windowWidth && centerY + radius < windowHeight){
+          drawHexagon(centerX, centerY , mainCellSize, 0);
+        }
       }
       else{
-        drawHexagon(x * mainCellSize , y * height , mainCellSize);
+        centerX = x * mainCellSize;
+        centerY = y * height;
+        if(centerX - radius > 0 && centerX + radius < windowWidth && centerY - radius > 0 ){
+          drawHexagon( centerX , centerY , mainCellSize, 50);  
+        }
       }
     }
     c++;
@@ -196,6 +220,10 @@ function keyPressed(){
   if(key === 'P' || key === 'p'){
     paused = !paused; 
   }
+
+  if(key === 'e' || key === 'E'){
+    gameState = "endScreen";
+  }
 }
 
 function updateGame(){
@@ -204,7 +232,7 @@ function updateGame(){
 //END SCREEN
 function endScreen(){
   let buttonX = width/2; //x-coordinate of button
-  let buttonY = 3/5 * height; //y-coordinate of button
+  let buttonY = 3/5 * height + 150; //y-coordinate of button
 
   background(31);
   // finding indices 
@@ -316,9 +344,9 @@ function getRandomNeighours(row, col){
 }
 
 //DRAW HE HEX TILES
-function drawHexagon(x, y, d){
+function drawHexagon(x, y, d, colour){
   stroke(255);
-  fill(0);
+  fill(colour);
   beginShape();
   vertex(x - 0.5 * d,y); // extreme left 
   

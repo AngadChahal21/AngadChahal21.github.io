@@ -8,6 +8,8 @@
 let myFont;
 let pause;
 
+let randomY;
+
 let spawnDelay = 2000; // 2 seconds delay between spawns
 let lastSpawnTime = 0;
 
@@ -116,6 +118,7 @@ class Enemy {
     let angle = atan2(playerY - this.y, playerX - this.x);
     this.x += this.speed * cos(angle);
     this.y += this.speed * sin(angle);
+
   }
 }
 
@@ -365,7 +368,7 @@ function updateGame(){
   }
 
   for (let enemy of enemies) {
-    enemy.moveTowardPlayer(player.x, player.y);
+    enemy.moveTowardPlayer(grid[0][grid[0].length - 1].xCoord - gridLength, enemy.y);
     enemy.display();
   }
  
@@ -514,7 +517,7 @@ function drawHexagon(x, y, d, colour){
 function spawnEnemy() {
   //let x = random(width);
   let x = grid[0][grid[0].length - 1].xCoord;
-  let randomY = floor(Math.random(1, mainRows - 1));
+  randomY = floor(random(1, mainRows - 1));
   console.log(randomY);
   let y = grid[randomY][grid[randomY].length - 1].yCoord ;
   enemies.push(new Enemy(x, y, 70, 2)); // Size and speed of enemies

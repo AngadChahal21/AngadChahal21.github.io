@@ -8,6 +8,9 @@
 let myFont;
 let pause;
 
+let spawnDelay = 2000; // 2 seconds delay between spawns
+let lastSpawnTime = 0;
+
 //mouse animation(circle)
 ////////////////
 let spacing = 20;
@@ -43,17 +46,18 @@ let allNeighbours = [];
 ////////////////////////////
 let mainRows;             //
 let mainCols;             //
-let mainCellSize;         //
+let mainCellSize = 100;   
+let radius = mainCellSize/2;      //
 let numSides = 6;         //
+let gridLength;
+let startingPoint;
 ////////////////////////////
 
 //game logic
 let paused = false;
-let character;
-let bots = [];
-let indices = [];
-
-
+let grid = [];
+let enemies = [];
+let bulletsFired = [];
 
 let gameState = "startScreen";
 
@@ -62,6 +66,97 @@ function preload(){
   pause = loadImage('./pictures/pausedButton.png');
 }
 
+
+
+class Player {
+  constructor(x, y, size, speed) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.speed = speed;
+  }
+
+  // Method to display the player
+  display() {
+    fill(0, 255, 0); // Red color for the player
+    noStroke();
+    ellipse(this.x, this.y, this.size);
+  }
+
+  // Method to handle movement with arrow keys
+  move() {
+    if (keyIsDown(UP_ARROW)) {
+      this.y -= (sqrt(3) * radius);
+    }
+    if (keyIsDown(DOWN_ARROW)) {
+      this.y += (sqrt(3) * radius);
+    }
+  }
+}
+
+let player;
+
+class Enemy {
+  constructor(x, y, size, speed) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.speed = speed;
+  }
+
+  // Display the enemy
+  display() {
+    fill(255, 0, 0); // Red color for the enemy
+    noStroke();
+    ellipse(this.x, this.y, this.size);
+  }
+
+  // Move towards the player
+  moveTowardPlayer(playerX, playerY) {
+    let angle = atan2(playerY - this.y, playerX - this.x);
+    this.x += this.speed * cos(angle);
+    this.y += this.speed * sin(angle);
+  }
+}
+
+class Bullet {
+  constructor(x, y, xSpd, ySpd) {
+    this.x = x;
+    this.y = y;
+    this.xSpd = xSpd;
+    this.ySpd = ySpd;
+  }
+
+  display() {
+    push();
+    stroke(230, 255, 0);
+    fill(230, 255, 0, 135);
+    ellipse(this.x, this.y, 30);
+    pop();
+  }
+
+  update() {
+    this.x += this.xSpd;
+    this.y += this.ySpd;
+    this.xSpd *= 0.994; // Gradual slowdown
+    this.ySpd *= 0.994;
+  }
+
+  hitScan() {
+    for (let i = 0; i < enemies.length; i++) {
+      let enemy = enemies[i];
+      let distToEnemy = dist(this.x, this.y, enemy.x, enemy.y);
+      
+      // Check if the bullet is colliding with the enemy
+      if (distToEnemy < (enemy.size / 2 + 15)) { // 15 is the radius of the bullet
+        enemies.splice(i, 1); // Remove the enemy from the array
+        // Increment the score
+        return true; // Return true to indicate collision
+      }
+    }
+    return false; // No collision
+  }
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -76,13 +171,21 @@ function setup() {
 
   //main grid 
   mainCellSize = 100;
-  mainRows = windowHeight/(mainCellSize/2);
-  mainCols = windowWidth/mainCellSize;
+  
+  mainRows = floor(windowHeight/(sqrt(3)*radius));
+  mainCols = floor( 3/4 * windowWidth/(1.5 * mainCellSize));
 
+  gridLength = mainCellSize*mainCols + mainCellSize * (mainCols - 1)/2; 
+  startingPoint = (windowWidth - gridLength)/2;
+
+  player = new Player(width / 2, height / 2, 70, 3);
+
+  // for (let i = 0; i < 5; i++) {
+  //   let x = random(width);
+  //   let y = random(height);
+  //   enemies.push(new Enemy(x, y, 70, 2)); // Size and speed of enemies
+  // }
 }
-
-console.log(mainRows);
-console.log(mainCols);
 
 function draw() {
   background(220);
@@ -92,11 +195,13 @@ function draw() {
 
   if(gameState === "startGame"){
     startGame();
+    console.log(grid);
   }
 
   if(gameState === "endScreen"){
     endScreen();
   }
+  
 
 }
 
@@ -167,6 +272,8 @@ function startScreen(){
 //START GAME
 function startGame(){
   
+  
+  
   console.log(mainRows);
   console.log(mainCols);
 
@@ -181,20 +288,25 @@ function startGame(){
 
   let coordX;
   let coordY;
-  for(let y = 0; y < mainRows; y+=0.5){
-    for(let x = 0; x < mainCols; x+=1.5){
+  for(let y = 0, j = 0; y < mainRows; y+=0.5, j+=0.5){
+    if(c%2 !== 0){
+      grid[j] = [];
+    }
+    for(let x = 0, i = 0; x < mainCols * 1.5; x+=1.5, i+=2){
       if(c% 2 === 0){
-        centerX = x * mainCellSize + 0.75 * mainCellSize;
+        centerX = (x * mainCellSize + 0.75 * mainCellSize) + startingPoint;
         centerY = y * height;
         if(centerX - radius > 0 && centerX + radius < windowWidth && centerY + radius < windowHeight){
-          drawHexagon(centerX, centerY , mainCellSize, 0);
+          drawHexagon(centerX, centerY , mainCellSize, 0); //black
+          grid[floor(j)][i + 1] = {xIndex: i + 1, yIndex: floor(j), xCoord: centerX, yCoord: centerY };
         }
       }
       else{
-        centerX = x * mainCellSize;
+        centerX = x * mainCellSize + startingPoint;
         centerY = y * height;
         if(centerX - radius > 0 && centerX + radius < windowWidth && centerY - radius > 0 ){
-          drawHexagon( centerX , centerY , mainCellSize, 50);  
+          drawHexagon( centerX , centerY , mainCellSize, 50); //gray
+          grid[floor(j)][i] = {xIndex: i, yIndex: j, xCoord: centerX, yCoord: centerY };
         }
       }
     }
@@ -226,14 +338,57 @@ function keyPressed(){
   }
 }
 
-function updateGame(){
+function mousePressed() {
+  let dx = mouseX - player.x; // Difference in x position between mouse and player
+  let dy = mouseY - player.y; // Difference in y position between mouse and player
+  let angle = atan2(dy, dx);  // Calculate angle
+
+  // Set speed based on angle
+  let bulletSpeed = 12;
+  let xSpd = cos(angle) * bulletSpeed;
+  let ySpd = sin(angle) * bulletSpeed;
+
+  let oneBullet = new Bullet(player.x, player.y, xSpd, ySpd);
+  bulletsFired.push(oneBullet);
 }
+
+function updateGame(){
+  player.x = grid[floor(mainRows/2)][0].xCoord;
+  player.y = grid[floor(mainRows/2)][0].yCoord;
+
+  player.display();
+  player.move();
+
+  if (millis() - lastSpawnTime > spawnDelay) {
+    spawnEnemy();
+    lastSpawnTime = millis(); // Update last spawn time
+  }
+
+  for (let enemy of enemies) {
+    enemy.moveTowardPlayer(player.x, player.y);
+    enemy.display();
+  }
+ 
+ 
+
+  for (let i = bulletsFired.length - 1; i >= 0; i--) {
+    let bullet = bulletsFired[i];
+    bullet.display();
+    bullet.update();
+    
+    // Check for out of bounds or collision
+    if (bullet.hitScan()) {
+      bulletsFired.splice(i, 1); // Remove the bullet after a hit
+    }
+  }
+}
+
 
 //END SCREEN
 function endScreen(){
   let buttonX = width/2; //x-coordinate of button
   let buttonY = 3/5 * height + 150; //y-coordinate of button
-
+  
   background(31);
   // finding indices 
   let row = floor(mouseY/CELL_SIZE); 
@@ -243,9 +398,8 @@ function endScreen(){
   if(row !== currentRow || col !== currentCol){
     currentRow = row;
     currentCol = col;
-
+    
     let newNeighbours = getRandomNeighours(row, col);
-    console.log(newNeighbours);
     for (let neighbour of newNeighbours) {
       allNeighbours.push(neighbour);
     }    
@@ -261,10 +415,8 @@ function endScreen(){
 
   //displaying neighbour grid cells
   for(let neighbour of allNeighbours){
-    console.log(neighbour.col);
     let neighbourX = neighbour.col * CELL_SIZE;
     let neighbourY = neighbour.row * CELL_SIZE;
-    console.log(neighbour.opacity);
 
     
 
@@ -331,14 +483,10 @@ function getRandomNeighours(row, col){
       if(!isCurrent && withinBounds && random(0,100) < PROB_OF_NEIGHBOUR){
         neighbours.push({row:neighbourRow, col: neighbourCol, opacity: 255});
       }
-
-      console.log(neighbourRow);
-      console.log(neighbourCol);
     }
 
   }
   
-  console.log(neighbours);
   return neighbours;
 
 }
@@ -361,4 +509,12 @@ function drawHexagon(x, y, d, colour){
   vertex(x - 0.25 * d, y + 0.5 * (Math.sqrt(3) * 0.5 * d));// bottom left 
   
   endShape(CLOSE);
+}
+
+function spawnEnemy() {
+  //let x = random(width);
+  let x = grid[0][grid[0].length - 1].xCoord;
+  let randomY = random(0,12);
+  let y = random(height);
+  enemies.push(new Enemy(x, y, 70, 2)); // Size and speed of enemies
 }

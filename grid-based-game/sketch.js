@@ -237,7 +237,7 @@ function startScreen(){
   textFont(myFont);
   textAlign(CENTER, CENTER);
   textSize(fontSize);
-  text("?", width / 2, height / 2 - 100); 
+  text("Zombie shooter", width / 2, height / 2 - 100); 
 
   //button hovered
   if(mouseX < buttonX + 200 && mouseX > buttonX - 200 && mouseY > buttonY - 50 && mouseY < buttonY + 50){
@@ -514,7 +514,8 @@ function drawHexagon(x, y, d, colour){
 function spawnEnemy() {
   //let x = random(width);
   let x = grid[0][grid[0].length - 1].xCoord;
-  let randomY = random(0,12);
-  let y = random(height);
+  let randomY = floor(Math.random(1, mainRows - 1));
+  console.log(randomY);
+  let y = grid[randomY][grid[randomY].length - 1].yCoord ;
   enemies.push(new Enemy(x, y, 70, 2)); // Size and speed of enemies
 }

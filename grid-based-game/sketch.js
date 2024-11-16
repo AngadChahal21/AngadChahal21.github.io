@@ -1,15 +1,31 @@
-// Project Title
+// Grid Based Project - Zombie Shooter
 // Angadveer Singh Chahal
-// Date
+// 15 Nov, 2024
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// Used functioning hex grids[arragement, movement, indices], classes( started using a little before they were taught in class), concepts like collision detection, 
+//using grids to make interactive mouse trailing effects
 
+// The game is based around a player that shoots bots preventing them from reaching the left-most edge of the screen.
+// 'p' to pause and 'e' to exit
+
+//starting values for timer and score, and reached bots
+let timer = 20;
+let score  = 0;
+let reached = 0;
+
+//storing images 
 let myFont;
 let pause;
 
+//helps to find Y coords of spawing bots/enemies 
 let randomY;
 
+//Timer update data
+let lastTimeUpdate = 0;
+let timerDelay = 1000;
+
+//Spawn update data
 let spawnDelay = 2000; // 2 seconds delay between spawns
 let lastSpawnTime = 0;
 
@@ -46,23 +62,29 @@ let allNeighbours = [];
 
 //main grid
 ////////////////////////////
-let mainRows;             //
-let mainCols;             //
-let mainCellSize = 100;   
-let radius = mainCellSize/2;      //
-let numSides = 6;         //
-let gridLength;
-let startingPoint;
+let mainRows;             
+let mainCols;             
+let mainCellSize = prompt("Enter desired cell size", 100);
+let radius = mainCellSize/2;  
+let numSides = 6;         
+let gridLength;           
+let startingPoint;        
 ////////////////////////////
 
+// hex tile deminsions
+let hexHeight;
+let hexWidth;
+
 //game logic
-let paused = false;
-let grid = [];
+let paused = false; //use to pause the game
+let grid = []; // holds the indices & co-ordinates
 let enemies = [];
 let bulletsFired = [];
+let player;
 
 let gameState = "startScreen";
 
+//preloading font and image
 function preload(){
   myFont = loadFont('PressStart2P-Regular.ttf');
   pause = loadImage('./pictures/pausedButton.png');
@@ -80,46 +102,56 @@ class Player {
 
   // Method to display the player
   display() {
-    fill(0, 255, 0); // Red color for the player
+    fill(0, 255, 0);
     noStroke();
     ellipse(this.x, this.y, this.size);
   }
-
-  // Method to handle movement with arrow keys
-  move() {
-    if (keyIsDown(UP_ARROW)) {
-      this.y -= (sqrt(3) * radius);
-    }
-    if (keyIsDown(DOWN_ARROW)) {
-      this.y += (sqrt(3) * radius);
-    }
-  }
 }
 
-let player;
+
 
 class Enemy {
-  constructor(x, y, size, speed) {
+  
+  constructor(x, y, size, speed, check) {
     this.x = x;
     this.y = y;
     this.size = size;
     this.speed = speed;
+    this.check = check;
   }
 
   // Display the enemy
   display() {
-    fill(255, 0, 0); // Red color for the enemy
+    fill(255, 0, 0);
     noStroke();
     ellipse(this.x, this.y, this.size);
   }
 
+  
+
   // Move towards the player
   moveTowardPlayer(playerX, playerY) {
-    let angle = atan2(playerY - this.y, playerX - this.x);
-    this.x += this.speed * cos(angle);
-    this.y += this.speed * sin(angle);
 
+    if (this.x <= grid[1][0].xCoord) {
+      if(this.check === 1){
+        reached++;
+      }
+      this.check = 0;
+      return;
+    }
+  
+    // Move the enemy one step to the left
+    this.x -= 3/4 * mainCellSize;
+  
+    //changing the y using conditional statements because of the off-sets 
+    if (this.y % hexHeight > hexHeight / 2) {
+      this.y += hexHeight / 2;
+    } 
+    else {
+      this.y -= hexHeight / 2;
+    }
   }
+
 }
 
 class Bullet {
@@ -138,13 +170,15 @@ class Bullet {
     pop();
   }
 
+  //movement
   update() {
     this.x += this.xSpd;
     this.y += this.ySpd;
-    this.xSpd *= 0.994; // Gradual slowdown
+    this.xSpd *= 0.994; 
     this.ySpd *= 0.994;
   }
 
+  //check collision
   hitScan() {
     for (let i = 0; i < enemies.length; i++) {
       let enemy = enemies[i];
@@ -153,7 +187,7 @@ class Bullet {
       // Check if the bullet is colliding with the enemy
       if (distToEnemy < (enemy.size / 2 + 15)) { // 15 is the radius of the bullet
         enemies.splice(i, 1); // Remove the enemy from the array
-        // Increment the score
+        score++;
         return true; // Return true to indicate collision
       }
     }
@@ -173,24 +207,20 @@ function setup() {
   numCols = Math.ceil(windowWidth/ CELL_SIZE);
 
   //main grid 
-  mainCellSize = 100;
-  
   mainRows = floor(windowHeight/(sqrt(3)*radius));
   mainCols = floor( 3/4 * windowWidth/(1.5 * mainCellSize));
 
   gridLength = mainCellSize*mainCols + mainCellSize * (mainCols - 1)/2; 
   startingPoint = (windowWidth - gridLength)/2;
 
-  player = new Player(width / 2, height / 2, 70, 3);
+  player = new Player(width / 2, height / 2, mainCellSize/1.5, 3);
 
-  // for (let i = 0; i < 5; i++) {
-  //   let x = random(width);
-  //   let y = random(height);
-  //   enemies.push(new Enemy(x, y, 70, 2)); // Size and speed of enemies
-  // }
+  hexWidth = mainCellSize;
+  hexHeight = sqrt(3) * radius;
 }
 
 function draw() {
+  frameRate(60);
   background(220);
   if(gameState === "startScreen"){
     startScreen();
@@ -198,14 +228,11 @@ function draw() {
 
   if(gameState === "startGame"){
     startGame();
-    console.log(grid);
   }
 
   if(gameState === "endScreen"){
     endScreen();
   }
-  
-
 }
 
 //START SCREEN
@@ -267,25 +294,31 @@ function startScreen(){
     textSize(15);
     text("Start", buttonX, buttonY);
   }
-
-  
 }
-
 
 //START GAME
 function startGame(){
-  
-  
-  
-  console.log(mainRows);
-  console.log(mainCols);
-
   background(0);
+
+  fill(255);
+  stroke(255);
+  textSize(20);
+  text("Time left: \n" + timer, windowWidth - 120, 40); //timer display
+
+  textSize(15);
+  text("P to  \n pause & resume \n \n E to \n exit", 0 + 120, 60); // pausing and exiting info shown
+
+  
+
   strokeJoin(ROUND);
   rectMode(CENTER);
-  let c = 1;
+
+  let c = 1; // just an acculator used to help in the offsets using if c%2 then this, else that
+
   let height = sqrt(3) * 0.5 * mainCellSize;
   let radius = mainCellSize/2;
+
+  //used as the parameters when calling the hexagon function
   let centerX;
   let centerY;
 
@@ -313,10 +346,11 @@ function startGame(){
         }
       }
     }
-    c++;
+    c++; // to make sure that the next set of hexagons made are off-set 
     
   }
 
+  //this means the game will truly pause when p is clicked
   if(!paused){
     updateGame();
   }
@@ -355,34 +389,55 @@ function mousePressed() {
   bulletsFired.push(oneBullet);
 }
 
+// enemy movement delay data
+let enemyMoveTimer = 0;
+let enemyMoveInterval = 500;
+
 function updateGame(){
+  if (millis() - lastTimeUpdate >= timerDelay && timer > 0) {  //update timer
+    timer--; 
+    lastTimeUpdate = millis(); 
+  }
+
   player.x = grid[floor(mainRows/2)][0].xCoord;
   player.y = grid[floor(mainRows/2)][0].yCoord;
 
+  // player.move();
   player.display();
-  player.move();
 
+  //spawing of enemies 
   if (millis() - lastSpawnTime > spawnDelay) {
     spawnEnemy();
     lastSpawnTime = millis(); // Update last spawn time
   }
 
-  for (let enemy of enemies) {
-    enemy.moveTowardPlayer(grid[0][grid[0].length - 1].xCoord - gridLength, enemy.y);
+  //movement of enemies 
+  if (millis() - enemyMoveTimer >= enemyMoveInterval){
+    for (let enemy of enemies) {
+      enemy.moveTowardPlayer(grid[0][grid[0].length - 1].xCoord - gridLength, enemy.y);
+    }
+    enemyMoveTimer = millis();
+  }
+  
+  //displaying enemies
+  for(let enemy of enemies){
     enemy.display();
   }
  
- 
-
+  //entire bullet data
   for (let i = bulletsFired.length - 1; i >= 0; i--) {
     let bullet = bulletsFired[i];
     bullet.display();
     bullet.update();
     
-    // Check for out of bounds or collision
+    // Check for collision
     if (bullet.hitScan()) {
       bulletsFired.splice(i, 1); // Remove the bullet after a hit
     }
+  }
+
+  if(timer<=0){   ///end the game
+    gameState = "endScreen";
   }
 }
 
@@ -437,7 +492,7 @@ function endScreen(){
   textFont(myFont);
   textAlign(CENTER, CENTER);
   textSize(55);
-  text("You completed in", width / 2, height / 2 - 100); 
+  text("You killed " + score + " bots \n and " + reached + "\n bots reached the end" , width / 2, height / 2 - 100); 
 
   //button hovered
   if(mouseX < buttonX + 200 && mouseX > buttonX - 200 && mouseY > buttonY - 50 && mouseY < buttonY + 50){
@@ -494,7 +549,7 @@ function getRandomNeighours(row, col){
 
 }
 
-//DRAW HE HEX TILES
+//DRAW THE HEX TILES
 function drawHexagon(x, y, d, colour){
   stroke(255);
   fill(colour);
@@ -515,10 +570,9 @@ function drawHexagon(x, y, d, colour){
 }
 
 function spawnEnemy() {
-  //let x = random(width);
-  let x = grid[0][grid[0].length - 1].xCoord;
-  randomY = floor(random(1, mainRows - 1));
+  let x = grid[0][grid[0].length - 1].xCoord; // the center of the last column
+  randomY = floor(random(1, mainRows - 1)); 
   console.log(randomY);
-  let y = grid[randomY][grid[randomY].length - 1].yCoord ;
-  enemies.push(new Enemy(x, y, 70, 2)); // Size and speed of enemies
+  let y = grid[randomY][grid[randomY].length - 1].yCoord ; // the center of a random row
+  enemies.push(new Enemy(x, y, mainCellSize/1.5, random(5,10),1));
 }

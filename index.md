@@ -13,6 +13,7 @@
 - [Grid Demo](grid)
 - [Rectangular Grid](rectangle-grid)
 - [Walker OOP demo](walker-oop)
+- [Fireworks OOP](fireworks)
 
 ## Projects 
 

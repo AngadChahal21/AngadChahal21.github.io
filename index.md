@@ -14,6 +14,8 @@
 - [Rectangular Grid](rectangle-grid)
 - [Walker OOP demo](walker-oop)
 - [Fireworks OOP](fireworks)
+- [Connected Nodes OOP](nodes)
+- [Collide 2d Library](collide)
 
 ## Projects 
 
